@@ -10,6 +10,11 @@ weak.linter.mathlibStandardSet = true
 maxSynthPendingDepth = 3
 
 [[require]]
+name = "LeanModularForms"
+git = "https://github.com/dozenalist/LeanModularForms.git"
+rev = "master"
+
+[[require]]
 name = "mathlib"
 scope = "leanprover-community"
 rev = "v4.35.0-rc3"
