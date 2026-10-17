@@ -1,0 +1,10 @@
+
+
+import ModularFormsMod.ModularFormOver.Defs
+import ModularFormsMod.ModularFormOver.Basic
+import ModularFormsMod.ModularFormOver.Hecke
+
+import ModularFormsMod.EventuallyEq
+import ModularFormsMod.discProduct
+import ModularFormsMod.qExp_discriminant
+import ModularFormsMod.ModularForm
