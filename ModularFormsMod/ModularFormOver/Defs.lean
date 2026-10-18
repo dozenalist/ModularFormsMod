@@ -3,11 +3,13 @@ import Mathlib.NumberTheory.ModularForms.QExpansion
 set_option linter.style.header false
 
 /-!
-This file defines isOver as a predicate on ModularFormClass and defines
-ModularFormOver R as those modular forms whose q-expansions lie over R
+# Modular forms with Fourier coefficients in a chosen ring
 
-Perhaps redo using less ModularFormClass stuff
-theres a coeTC instance for a reason
+`ModularForm.isOver R f` asserts that the Fourier expansion of `f` comes from
+`R⟦X⟧` under the algebra map to `ℂ`. `ModularFormOver R Γ k` bundles this
+condition with a modular form, and `ModularFormOverClass` extends it to other
+types of modular forms. The file supplies arithmetic operations, changes of
+weight, and the graded commutative ring structure.
 -/
 
 open UpperHalfPlane PowerSeries MatrixGroups ModularForm CongruenceSubgroup
@@ -26,6 +28,7 @@ instance : IsMulApply (ℍ → ℂ) ℍ ℂ where
 instance {α} [SMul α ℂ] : IsSMulApply α (ℍ → ℂ) ℍ ℂ where
 
 
+/-- The subgroup `Γ` is contained in the image of SL(2, ℤ) in GL(2, ℝ). -/
 class Subgroup.le_SL2Z (Γ : Subgroup (GL (Fin 2) ℝ)) where
   le : Γ ≤ 𝒮ℒ := by rfl
 
@@ -42,6 +45,7 @@ instance ModularForm.instIsOneApply {Γ : Subgroup (GL (Fin 2) ℝ)} [Γ.HasDetP
   IsOneApply (ModularForm Γ 0) ℍ ℂ where
 
 open Function in
+/-- The Fourier expansion of a constant function is the corresponding constant power series. -/
 @[simp] theorem qExpansion_const (h) (c : ℂ) :
     qExpansion h (Function.const ℍ c) = C c := by
   rw [show Function.const ℍ c = fun _ => c by rfl]
@@ -69,6 +73,7 @@ namespace ModularForm
 variable {k j : ℤ}
 
 
+/-- The Fourier expansion at infinity, with parameter determined by the strict cusp width of `Γ`. -/
 noncomputable abbrev qExp {Γ'} {F : Type*} [FunLike F ℍ ℂ] [ModularFormClass F Γ' k]
     (f : F) (Γ : Subgroup (GL (Fin 2) ℝ) := Γ') : ℂ⟦X⟧ :=
   qExpansion Γ.strictWidthInfty f
@@ -105,6 +110,7 @@ theorem qExp_def (f : F) : qExp f = qExpansion Γ.strictWidthInfty f := rfl
   exact ModularForm.qExpansion_smul Γ.strictWidthInfty_pos
     Γ.strictWidthInfty_mem_strictPeriods _ f
 
+/-- Modular forms for an arithmetic group are determined by their Fourier expansions at infinity. -/
 theorem qExp_inj [Γ.IsArithmetic] {f g : F} (h : qExp f = qExp g) : f = g := by
   apply DFunLike.coe_injective
   change ⇑(f : ModularForm Γ k) = ⇑(g : ModularForm Γ k)
@@ -151,6 +157,7 @@ open Function in
 
 end ModularForm
 
+/-- The image of the algebra map `R` → `S`, viewed as a subring of `S`. -/
 def rangeMap (R S : Type*) [CommRing R] [CommRing S]
   [Algebra R S] : Subring S := RingHom.range (algebraMap R S)
 
@@ -169,6 +176,8 @@ theorem MapPowerSeries (R S : Type*) [CommRing R] [CommRing S] [Algebra R S] :
     algebraMap R⟦X⟧ S⟦X⟧ = map (algebraMap R S) := rfl
 
 
+/-- Taking constant coefficients of series defined over `R` gives exactly the image of `R` in
+`ℂ`. -/
 theorem rangeMap_map_constantCoeff (R : Type*) [CommRing R] [Algebra R ℂ] :
     (R⟦X⟧ // ℂ⟦X⟧).map constantCoeff = R // ℂ := by
   ext z
@@ -186,12 +195,14 @@ theorem rangeMap_map_constantCoeff (R : Type*) [CommRing R] [Algebra R ℂ] :
       exact ⟨PowerSeries.C r, by simp⟩
     · simp
 
+/-- Coefficientwise extension of scalars is injective when the algebra map is injective. -/
 theorem map_algebraMap_injective {R : Type*} (S : Type*)
   [CommRing R] [CommRing S] [Algebra R S] [FaithfulSMul R S] :
     Function.Injective (map (algebraMap R S)) :=
   PowerSeries.map_injective (algebraMap R S) (FaithfulSMul.algebraMap_injective R S)
 
 
+/-- Identify `R` with its image in an algebra on which it acts faithfully. -/
 noncomputable def rangeMapEquiv (R S : Type*) [CommRing R] [CommRing S]
     [Algebra R S] [FaithfulSMul R S] : R ≃+* R // S :=
   RingEquiv.ofBijective (algebraMap R S).rangeRestrict ⟨
@@ -202,6 +213,7 @@ noncomputable def rangeMapEquiv (R S : Type*) [CommRing R] [CommRing S]
     RingHom.rangeRestrict_surjective _⟩
 
 
+/-- Identify power series over `R` with their coefficientwise image in `S`⟦X⟧. -/
 noncomputable def rangeMapPowerSeriesEquiv (R S : Type*) [CommRing R] [CommRing S]
     [Algebra R S] [FaithfulSMul R S] : R⟦X⟧ ≃+* R⟦X⟧ // S⟦X⟧ :=
   RingEquiv.ofBijective (map (algebraMap R S)).rangeRestrict ⟨
@@ -228,10 +240,13 @@ variable {Γ : Subgroup (GL (Fin 2) ℝ)} {k j : ℤ}
   {F : Type*} [FunLike F ℍ ℂ] [hF : ModularFormClass F Γ k]
 
 
+/-- The Fourier expansion of `f` is obtained from a formal power series over `R`. -/
 def isOver (R : Type*) [CommRing R] [Algebra R ℂ] (f : F) : Prop :=
   qExp f ∈ R⟦X⟧ // ℂ⟦X⟧
 
 
+/-- A modular form is defined over `R` exactly when each Fourier coefficient lies in the image of
+`R`. -/
 theorem isOver_iff (R : Type*) [CommRing R] [Algebra R ℂ] (f : F) :
     isOver R f ↔ ∀ n, (qExp f).coeff n ∈ R // ℂ := by
   simp only [isOver, RingHom.mem_range, ← rangeMap_map_constantCoeff,
@@ -250,6 +265,8 @@ theorem isOver_iff (R : Type*) [CommRing R] [Algebra R ℂ] (f : F) :
 variable {H} [FunLike H ℍ ℂ] [ModularFormClass H Γ k] {f f' : F} {g : H}
   {R : Type*} [CommRing R] [Algebra R ℂ]
 
+/-- Recover the Fourier expansion over `R` from its complex image and the proof that it is over
+`R`. -/
 protected noncomputable def isOver.fourier [FaithfulSMul R ℂ]
     (hf : isOver R f) : PowerSeries R :=
   (rangeMapPowerSeriesEquiv R ℂ).symm ⟨qExp f, hf⟩
@@ -259,6 +276,7 @@ theorem isOver.fourier_def [FaithfulSMul R ℂ] (hf : isOver R f) :
   hf.fourier = (rangeMapPowerSeriesEquiv R ℂ).symm ⟨qExp f, hf⟩ := rfl
 
 
+/-- Extending the recovered coefficients to `ℂ` gives the original Fourier expansion. -/
 @[simp]
 protected theorem isOver.map_fourier [FaithfulSMul R ℂ] (hf : isOver R f) :
     map (algebraMap R ℂ) hf.fourier = qExp f := by
@@ -267,6 +285,7 @@ protected theorem isOver.map_fourier [FaithfulSMul R ℂ] (hf : isOver R f) :
   simp only [RingEquiv.apply_symm_apply]
 
 
+/-- Each recovered coefficient maps to the corresponding complex Fourier coefficient. -/
 @[simp]
 protected theorem isOver.map_coeff_fourier [FaithfulSMul R ℂ] (hf : isOver R f) :
     ∀ n, (algebraMap R ℂ) (coeff n hf.fourier) = coeff n (qExp f) := by
@@ -283,24 +302,29 @@ protected theorem isOver.map_coeff_fourier [FaithfulSMul R ℂ] (hf : isOver R f
 
 include hF
 
+/-- Forms whose Fourier coefficients lie over `R` are closed under addition. -/
 theorem isOver_add [Γ.IsArithmetic] [Add F] [IsAddApply F ℍ ℂ]
     (hf : isOver R f) (hf' : isOver R f') : isOver R (f + f') := by
   rw [isOver, qExp_add (Γ := Γ)]; exact add_mem hf hf'
 
+/-- Negation preserves the condition of having Fourier coefficients over `R`. -/
 theorem isOver_neg [Γ.IsArithmetic] (hf : isOver R f)
     [Neg F] [IsNegApply F ℍ ℂ] : isOver R (-f) := by
   rw [isOver, qExp_neg]; exact neg_mem hf
 
+/-- Forms whose Fourier coefficients lie over `R` are closed under subtraction. -/
 theorem isOver_sub [Γ.IsArithmetic] [Sub F] [IsSubApply F ℍ ℂ]
     (hf : isOver R f) (hf' : isOver R f') : isOver R (f - f') := by
   rw [isOver, qExp_sub]; exact sub_mem hf hf'
 
 omit hF
 
+/-- The product of forms over `R` also has Fourier coefficients over `R`. -/
 theorem isOver_mul [Γ.IsArithmetic] {f : ModularForm Γ k} {g : ModularForm Γ j}
   (hf : isOver R f) (hg : isOver R g) : isOver R (f.mul g) := by
   rw [isOver, qExp_mul]; exact mul_mem hf hg
 
+/-- Natural powers preserve the condition of having Fourier coefficients over `R`. -/
 theorem isOver_pow [Γ.IsArithmetic] {f : ModularForm Γ k}
     (m : ℕ) (hf : isOver R f) : isOver R (f.pow m) := by
   rw [isOver, qExp_pow]; exact pow_mem hf m
@@ -313,6 +337,7 @@ theorem isOver_pow [Γ.IsArithmetic] {f : ModularForm Γ k}
     isOver R (n : ModularForm Γ 0) := by
   rw [isOver, qExp_natCast]; exact natCast_mem _ _
 
+/-- A constant in the image of `R` defines a weight-zero form over `R`. -/
 theorem isOver_const [Γ.HasDetOne] {r : ℂ} (hr : r ∈ R // ℂ) :
     isOver R (const (Γ := Γ) r) := by
   rw [isOver, qExp_const]
@@ -321,6 +346,7 @@ theorem isOver_const [Γ.HasDetOne] {r : ℂ} (hr : r ∈ R // ℂ) :
 
 include hF
 
+/-- Multiplication by a complex scalar in the image of `R` preserves forms over `R`. -/
 theorem isOver_csmul [Γ.IsArithmetic] {r : ℂ} (hr : r ∈ R // ℂ) (hf : isOver R f)
     [SMul ℂ F] [IsSMulApply ℂ F ℍ ℂ] : isOver R (r • f) := by
   rw [isOver_iff]; intro n
@@ -330,6 +356,7 @@ theorem isOver_csmul [Γ.IsArithmetic] {r : ℂ} (hr : r ∈ R // ℂ) (hf : isO
     hg, qExp_smul, map_smul, smul_eq_mul]
 
 
+/-- Compatible scalar multiplication preserves forms over `R`. -/
 theorem isOver_smul [Γ.IsArithmetic] {α} [CommSemiring α] [Algebra α R]
   [Algebra α ℂ] [IsScalarTower α R ℂ] [SMul α F] [IsSMulApply α F ℍ ℂ]
     (c : α) (f : F) (hf : isOver R f) : isOver R (c • f) := by
@@ -343,16 +370,20 @@ theorem isOver_smul [Γ.IsArithmetic] {α} [CommSemiring α] [Algebra α R]
 end ModularForm
 
 
+/-- A weight-`k` modular form for `Γ` whose Fourier expansion comes from `R`⟦X⟧. -/
 structure ModularFormOver (R : Type) [CommRing R] [Algebra R ℂ]
   (Γ : outParam <| Subgroup (GL (Fin 2) ℝ)) (k : outParam ℤ)
     extends ModularForm Γ k where
+  /-- The Fourier expansion of the underlying modular form is defined over `R`. -/
   isOver' : isOver R toModularForm
 
 
+/-- A type of weight-`k` modular forms for `Γ` whose Fourier expansions are defined over `R`. -/
 class ModularFormOverClass (F : Type*) [FunLike F ℍ ℂ]
   (R : Type) [CommRing R] [Algebra R ℂ]
     (Γ : outParam <| Subgroup (GL (Fin 2) ℝ)) (k : outParam ℤ) : Prop
       extends ModularFormClass F Γ k where
+  /-- Every form in the class has Fourier coefficients in the image of `R`. -/
   isOver_self (R) (f : F) : isOver R f
 
 
@@ -371,11 +402,13 @@ instance : FunLike (ModularFormOver R Γ k) ℍ ℂ where
   coe_injective f g h := by cases f; cases g; congr; exact DFunLike.ext' h
 
 
+/-- Two bundled forms over `R` are equal if their values agree on the upper half-plane. -/
 theorem ext₂ {f g : ModularFormOver R Γ k} (h : ∀ z, f z = g z) : f = g :=
   DFunLike.ext f g h
 
 initialize_simps_projections ModularFormOver (toFun → coe, as_prefix coe)
 
+/-- Bundle an element of a modular-form class together with its coefficient-ring condition. -/
 @[simps -fullyApplied, coe]
 def ModularFormOverClass.modularFormOver [ModularFormOverClass F R Γ k] (f : F) :
     ModularFormOver R Γ k where
@@ -481,6 +514,7 @@ instance {α : Type*} [CommSemiring α] [Algebra α R] [Algebra α ℂ]
 
 instance : Inhabited (ModularFormOver R Γ k) := ⟨0⟩
 
+/-- Multiply forms over `R`, adding their weights. -/
 @[simps! -fullyApplied coe]
 def mul [Γ.IsArithmetic] (f : ModularFormOver R Γ k) (g : ModularFormOver R Γ j) :
     ModularFormOver R Γ (k + j) :=
@@ -490,6 +524,7 @@ def mul [Γ.IsArithmetic] (f : ModularFormOver R Γ k) (g : ModularFormOver R Γ
   (g : ModularFormOver R Γ j) (z : ℍ) : (f.mul g) z = f z * g z := rfl
 
 
+/-- Raise a form over `R` to a natural power, multiplying its weight by the exponent. -/
 def pow [Γ.IsArithmetic] (f : ModularFormOver R Γ k) (m : ℕ) : ModularFormOver R Γ (m * k) :=
   { toModularForm := f.1.pow m, isOver' := isOver_pow m f.isOver' }
 
@@ -499,6 +534,7 @@ def pow [Γ.IsArithmetic] (f : ModularFormOver R Γ k) (m : ℕ) : ModularFormOv
   rw [coe_pow]; rfl
 
 
+/-- The weight-zero modular form with constant value given by the image of r in `ℂ`. -/
 @[simps! -fullyApplied coe]
 def const [Γ.IsArithmetic] [Γ.HasDetOne] (r : R) : ModularFormOver R Γ 0 :=
   { toModularForm := ModularForm.const (algebraMap R ℂ r)
@@ -512,6 +548,7 @@ def const [Γ.IsArithmetic] [Γ.HasDetOne] (r : R) : ModularFormOver R Γ 0 :=
     const 1 = (1 : ModularFormOver R Γ 0) :=
   ext₂ fun _ => by rw [const_apply, map_one, one_apply]
 
+/-- Transport a modular form along an equality of weights. -/
 @[simps! -fullyApplied coe]
 def cast {a b : ℤ} (h : a = b) (f : ModularFormOver R Γ a) :
     ModularFormOver R Γ b :=
@@ -522,6 +559,8 @@ def cast {a b : ℤ} (h : a = b) (f : ModularFormOver R Γ a) :
 @[simp] theorem cast_apply {a b z} (h : a = b) (f : ModularFormOver R Γ a) :
   f.cast h z = f z := rfl
 
+/-- Graded modular forms are equal when their weights agree and their forms agree after
+transport. -/
 theorem gradedMonoid_eq_of_cast {a b : GradedMonoid (ModularFormOver R Γ)}
     (h : a.1 = b.1) (h' : cast h a.2 = b.2) : a = b := by
   obtain ⟨i, x⟩ := a
@@ -542,6 +581,7 @@ instance (priority := 100) instGMul [Γ.IsArithmetic] :
     (GradedMonoid.GOne.one : ModularFormOver R Γ 0).1 = 1 := rfl
 
 
+/-- The weight-indexed family of modular forms over `R` is a graded commutative ring. -/
 instance instGCommRing [Γ.IsArithmetic] : DirectSum.GCommRing (ModularFormOver R Γ) where
   one_mul x := gradedMonoid_eq_of_cast (zero_add _) <| ext₂ fun _ => one_mul _
   mul_one x := gradedMonoid_eq_of_cast (add_zero _) <| ext₂ fun _ => mul_one _

@@ -14,7 +14,7 @@ In the parameter `q = exp (2 π i τ / h)`, its Fourier expansion is
 
 open UpperHalfPlane ModularForm
 open Real Complex
-open scoped MatrixGroups Topology
+open scoped MatrixGroups Topology Manifold
 
 namespace ModularFormOver
 
@@ -24,6 +24,8 @@ variable {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ}
 noncomputable def cuspWidth (Γ : Subgroup (GL (Fin 2) ℝ)) : ℕ :=
   Nat.ceil Γ.strictWidthInfty
 
+/-- For a subgroup of `SL(2, ℤ)`, the natural cusp width casts to its real strict width at
+infinity. -/
 theorem cuspWidth_cast [hΓ : Γ.le_SL2Z] :
     (cuspWidth Γ : ℝ) = Γ.strictWidthInfty := by
   have hm : Γ.strictWidthInfty ∈ (𝒮ℒ).strictPeriods := by
@@ -40,9 +42,11 @@ theorem cuspWidth_cast [hΓ : Γ.le_SL2Z] :
     exact hc.trans hz
   rw [cuspWidth, ← hn, Nat.ceil_natCast]
 
+/-- An arithmetic subgroup of `SL(2, ℤ)` has positive cusp width. -/
 theorem cuspWidth_pos [Γ.le_SL2Z] [Γ.IsArithmetic] : 0 < cuspWidth Γ := by
   exact_mod_cast (cuspWidth_cast (Γ := Γ)).symm ▸ Γ.strictWidthInfty_pos
 
+/-- The strict cusp width of the full modular group is one. -/
 @[simp] theorem cuspWidth_SL2Z : cuspWidth 𝒮ℒ = 1 := by
   simp [cuspWidth, Subgroup.strictWidthInfty_SL2Z]
 
@@ -53,11 +57,11 @@ private theorem qParam_deriv (h : ℝ) (z : ℂ) :
   rw [deriv_cexp (by fun_prop)]
   simp [Function.Periodic.qParam]; ring
 
-private theorem cuspFunction_normalizedDeriv (f : ModularForm Γ k)
-    {h : ℝ} (hh : 0 < h) (hp : h ∈ Γ.strictPeriods) :
+private theorem cuspFunction_normalizedDeriv (f : ℍ → ℂ) (hf : MDiff f)
+    (hb : IsBoundedAtImInfty f) {h : ℝ} (hh : 0 < h)
+    (hp : Function.Periodic (f ∘ UpperHalfPlane.ofComplex) h) :
     UpperHalfPlane.cuspFunction h ((h : ℂ) • Derivative.normalizedDerivOfComplex f) =ᶠ[𝓝 0]
       (fun q : ℂ => q * deriv (UpperHalfPlane.cuspFunction h f) q) := by
-  have : Fact (IsCusp OnePoint.infty Γ) := ⟨Γ.isCusp_of_mem_strictPeriods hh hp⟩
   filter_upwards [Metric.ball_mem_nhds (0 : ℂ) zero_lt_one] with q hq
   by_cases hq0 : q = 0
   · subst q
@@ -65,8 +69,7 @@ private theorem cuspFunction_normalizedDeriv (f : ModularForm Γ k)
         (((h : ℂ) • Derivative.normalizedDerivOfComplex f) ∘ UpperHalfPlane.ofComplex) 0 = 0 := by
       rw [Function.Periodic.cuspFunction_zero_of_zero_at_inf hh]
       exact Filter.ZeroAtFilter.smul (h : ℂ)
-        ((Derivative.isZeroAtImInfty_normalizedDerivOfComplex f.holo'
-        (ModularFormClass.bdd_at_infty f)).comp
+        ((Derivative.isZeroAtImInfty_normalizedDerivOfComplex hf hb).comp
           UpperHalfPlane.tendsto_comap_im_ofComplex)
     simp only [UpperHalfPlane.cuspFunction, hf0, zero_mul]
   · have hqnorm : ‖q‖ < 1 := mem_ball_zero_iff.mp hq
@@ -77,8 +80,7 @@ private theorem cuspFunction_normalizedDeriv (f : ModularForm Γ k)
     have hqτ : Function.Periodic.qParam h (τ : ℂ) = q :=
       Function.Periodic.qParam_right_inv hh.ne' hq0
     let g : ℂ → ℂ := UpperHalfPlane.cuspFunction h f
-    have hfper : Function.Periodic ((f : ℍ → ℂ) ∘ UpperHalfPlane.ofComplex) h :=
-      SlashInvariantFormClass.periodic_comp_ofComplex (f := f) hp
+    have hfper : Function.Periodic (f ∘ UpperHalfPlane.ofComplex) h := hp
     have hloc : ((f : ℍ → ℂ) ∘ UpperHalfPlane.ofComplex) =ᶠ[𝓝 (τ : ℂ)]
         g ∘ Function.Periodic.qParam h := by
       filter_upwards [isOpen_upperHalfPlaneSet.mem_nhds τ.im_pos] with z hz
@@ -86,8 +88,7 @@ private theorem cuspFunction_normalizedDeriv (f : ModularForm Γ k)
       simpa [g, Function.comp_apply, ofComplex_apply_of_im_pos hz] using heq.symm
     have hGdiff : DifferentiableAt ℂ g q := by
       dsimp [g]
-      exact UpperHalfPlane.differentiableAt_cuspFunction hh hfper f.holo'
-        (ModularFormClass.bdd_at_infty f) hqnorm
+      exact UpperHalfPlane.differentiableAt_cuspFunction hh hfper hf hb hqnorm
     have hGdiff' : DifferentiableAt ℂ g (Function.Periodic.qParam h (τ : ℂ)) :=
       hqτ ▸ hGdiff
     have hqdiff : DifferentiableAt ℂ (Function.Periodic.qParam h) (τ : ℂ) :=
@@ -106,13 +107,16 @@ private theorem cuspFunction_normalizedDeriv (f : ModularForm Γ k)
       (f := ((h : ℂ) • Derivative.normalizedDerivOfComplex f) ∘ UpperHalfPlane.ofComplex) hq0]
     simpa [g, hqτ, hτof] using hD
 
-private theorem qExpansion_normalizedDeriv (f : ModularForm Γ k)
-    {h : ℝ} (hh : 0 < h) (hp : h ∈ Γ.strictPeriods) :
+/-- Multiplying the normalized analytic derivative by the period corresponds to `X d/dX`
+on the Fourier expansion of a periodic holomorphic function bounded at infinity. -/
+theorem qExpansion_normalizedDeriv (f : ℍ → ℂ) (hf : MDiff f)
+    (hb : IsBoundedAtImInfty f) {h : ℝ} (hh : 0 < h)
+    (hp : Function.Periodic (f ∘ UpperHalfPlane.ofComplex) h) :
     UpperHalfPlane.qExpansion h ((h : ℂ) • Derivative.normalizedDerivOfComplex f) =
       PowerSeries.X * (UpperHalfPlane.qExpansion h f).derivative := by
   ext n
   rw [UpperHalfPlane.qExpansion_coeff,
-    (cuspFunction_normalizedDeriv f hh hp).iteratedDeriv_eq n]
+    (cuspFunction_normalizedDeriv f hf hb hh hp).iteratedDeriv_eq n]
   cases n with
   | zero => simp
   | succ n =>
@@ -120,7 +124,7 @@ private theorem qExpansion_normalizedDeriv (f : ModularForm Γ k)
       PowerSeries.coeff_X_pow_mul, PowerSeries.coeff_derivative]
     rw [UpperHalfPlane.qExpansion_coeff]
     have hG : AnalyticAt ℂ (UpperHalfPlane.cuspFunction h f) 0 :=
-      ModularFormClass.analyticAt_cuspFunction_zero f hh hp
+      UpperHalfPlane.analyticAt_cuspFunction_zero hh hp hf hb
     have hGprime : ContDiffAt ℂ n.succ
         (deriv (UpperHalfPlane.cuspFunction h f)) 0 :=
       (hG.contDiffAt : ContDiffAt ℂ (n.succ + 1)
@@ -153,6 +157,7 @@ private theorem qExpansion_normalizedDeriv (f : ModularForm Γ k)
     push_cast
     ring
 
+/-- The formal series `E₂ = 1 - 24 ∑ n ≥ 1, σ₁(n) X^n` over a commutative ring. -/
 noncomputable def e2Fourier (R : Type) [CommRing R] : PowerSeries R :=
   PowerSeries.mk fun n => if n = 0 then 1 else -24 * (ArithmeticFunction.sigma 1 n : R)
 
@@ -161,10 +166,13 @@ noncomputable def e2FourierAt (Γ : Subgroup (GL (Fin 2) ℝ))
     [Γ.le_SL2Z] [Γ.IsArithmetic] (R : Type) [CommRing R] : PowerSeries R :=
   PowerSeries.expand (cuspWidth Γ) (cuspWidth_pos.ne') (e2Fourier R)
 
+/-- For the full modular group, the cusp-parameter version of `E₂` is the usual formal series. -/
 @[simp] theorem e2FourierAt_SL2Z (R : Type) [CommRing R] :
     e2FourierAt 𝒮ℒ R = e2Fourier R := by
   simp [e2FourierAt]
 
+/-- The cusp-parameter `E₂` series has nonzero coefficients only in degrees divisible by the cusp
+width. -/
 theorem coeff_e2FourierAt [Γ.le_SL2Z] [Γ.IsArithmetic]
     (R : Type) [CommRing R] (n : ℕ) :
     (e2FourierAt Γ R).coeff n =
@@ -216,6 +224,10 @@ private theorem qExpansion_E2_at [Γ.le_SL2Z] [Γ.IsArithmetic] :
   rw [← cuspWidth_cast (Γ := Γ)]
   exact qExpansion_E2_nat (cuspWidth Γ) cuspWidth_pos.ne'
 
+/-- The period-one Fourier expansion of the analytic Eisenstein series `E₂`. -/
+theorem qExpansion_E2 : qExpansion 1 EisensteinSeries.E2 = e2Fourier ℂ := by
+  simpa using qExpansion_E2_nat 1 one_ne_zero
+
 /-- Fourier expansion of the Serre derivative scaled by `12` times the strict cusp width. -/
 theorem qExp_normalizedSerre [hΓ : Γ.le_SL2Z] [Γ.IsArithmetic] (f : ModularForm Γ k) :
     qExp (((12 : ℂ) * cuspWidth Γ) • Derivative.serreDerivativeMF k f hΓ.le) =
@@ -229,7 +241,8 @@ theorem qExp_normalizedSerre [hΓ : Γ.le_SL2Z] [Γ.IsArithmetic] (f : ModularFo
   have hD : AnalyticAt ℂ
       (UpperHalfPlane.cuspFunction h ((h : ℂ) • Derivative.normalizedDerivOfComplex f)) 0 := by
     apply (analyticAt_id.mul hF.deriv).congr
-    exact (cuspFunction_normalizedDeriv f hh hp).symm
+    exact (cuspFunction_normalizedDeriv f f.holo' (ModularFormClass.bdd_at_infty f) hh
+      (SlashInvariantFormClass.periodic_comp_ofComplex (f := f) hp)).symm
   have hw : (cuspWidth Γ : ℂ) = (h : ℂ) := by
     exact_mod_cast cuspWidth_cast (Γ := Γ)
   have hper : Function.Periodic (EisensteinSeries.E2 ∘ UpperHalfPlane.ofComplex) h := by
@@ -259,7 +272,9 @@ theorem qExp_normalizedSerre [hΓ : Γ.le_SL2Z] [Γ.IsArithmetic] (f : ModularFo
   change qExpansion h (((12 : ℂ) * (h : ℂ)) • Derivative.serreDerivative k f) = _
   rw [hsd, UpperHalfPlane.qExpansion_sub hD12 hE2Fc,
     UpperHalfPlane.qExpansion_smul hD, UpperHalfPlane.qExpansion_smul hE2F,
-    UpperHalfPlane.qExpansion_mul hE2 hF, qExpansion_normalizedDeriv f hh hp,
+    UpperHalfPlane.qExpansion_mul hE2 hF,
+    qExpansion_normalizedDeriv f f.holo' (ModularFormClass.bdd_at_infty f) hh
+      (SlashInvariantFormClass.periodic_comp_ofComplex (f := f) hp),
     qExpansion_E2_at]
 
 /-- The usual Serre derivative, expressed using `qExp` at the strict cusp width. -/
@@ -278,6 +293,8 @@ theorem qExp_serreDerivative [hΓ : Γ.le_SL2Z] [Γ.IsArithmetic] (f : ModularFo
   have hinv := congrArg (fun p : PowerSeries ℂ => ((12 : ℂ) * cuspWidth Γ)⁻¹ • p) heq
   simpa only [smul_sub, smul_smul, inv_mul_cancel₀ hc, one_smul, h1, h2] using hinv
 
+/-- The formal expression `12 X f' - k h E₂(X^h) f` for the scaled Serre derivative, where `h` is
+the cusp width. -/
 noncomputable def normalizedSerreFourier (R : Type) [CommRing R] [Algebra R ℂ]
     [FaithfulSMul R ℂ] [Γ.le_SL2Z] [Γ.IsArithmetic]
     (f : ModularFormOver R Γ k) : PowerSeries R :=
@@ -332,12 +349,14 @@ noncomputable def normalizedSerreDerivative (R : Type) [CommRing R] [Algebra R �
     have hn := congrArg (PowerSeries.coeff n) h
     simpa only [PowerSeries.coeff_map] using hn
 
+/-- Forgetting coefficients gives the usual Serre derivative scaled by `12 * cuspWidth Γ`. -/
 @[simp] theorem normalizedSerreDerivative_toModularForm (R : Type)
     [CommRing R] [Algebra R ℂ] [FaithfulSMul R ℂ] [hΓ : Γ.le_SL2Z] [Γ.IsArithmetic]
     (f : ModularFormOver R Γ k) :
     (normalizedSerreDerivative R f).toModularForm =
       ((12 : ℂ) * cuspWidth Γ) • Derivative.serreDerivativeMF k f hΓ.le := rfl
 
+/-- The Fourier expansion of the normalized Serre derivative is `normalizedSerreFourier R f`. -/
 theorem fourier_normalizedSerreDerivative (R : Type) [CommRing R] [Algebra R ℂ]
     [FaithfulSMul R ℂ] [Γ.le_SL2Z] [Γ.IsArithmetic] (f : ModularFormOver R Γ k) :
     fourier R (normalizedSerreDerivative R f) = normalizedSerreFourier R f := by
@@ -345,6 +364,8 @@ theorem fourier_normalizedSerreDerivative (R : Type) [CommRing R] [Algebra R ℂ
   rw [map_fourier R R (normalizedSerreDerivative R f), map_normalizedSerreFourier]
   rfl
 
+/-- Extract coefficients of the normalized Serre derivative from its formal power-series
+expression. -/
 theorem coeff_normalizedSerreDerivative (R : Type) [CommRing R] [Algebra R ℂ]
     [FaithfulSMul R ℂ] [Γ.le_SL2Z] [Γ.IsArithmetic] (f : ModularFormOver R Γ k) (n : ℕ) :
     coeff R n (normalizedSerreDerivative R f) =
@@ -352,6 +373,8 @@ theorem coeff_normalizedSerreDerivative (R : Type) [CommRing R] [Algebra R ℂ]
   change PowerSeries.coeff n (fourier R (normalizedSerreDerivative R f)) = _
   rw [fourier_normalizedSerreDerivative]
 
+/-- The degree-`n` coefficient of the scaled Serre derivative is `12 n aₙ` minus the `E₂`
+correction. -/
 theorem coeff_normalizedSerreDerivative_explicit (R : Type) [CommRing R]
     [Algebra R ℂ] [FaithfulSMul R ℂ] [Γ.le_SL2Z] [Γ.IsArithmetic] (f : ModularFormOver R Γ k)
     (n : ℕ) :

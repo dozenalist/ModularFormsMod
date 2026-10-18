@@ -1,15 +1,18 @@
 import Lean.Elab.Tactic.Simproc
 import Lean.Meta.Reduce
+import Mathlib.LinearAlgebra.Dimension.OrzechProperty
 import ModularFormsMod.ModularFormOver.Rat
 
-/-
-This file proves the sturm bound for Integer Modular Forms (see `coeff_trunc_injective`),
-provides a basis for the Integer Modular Forms of a given weight (see `GBasis`),
-proves the dimension formula for the space of IntegerModular Forms, (see `dimension_eq_dim`),
-proves facts about an upper-triangular basis (see `upTriangle_smul_G`),
-and proves some key facts about equality between Integer Modular Forms of high-order (see `eq_of_eq_ord_max`)
+/-!
+# Bases and the Sturm bound for level-one modular forms
 
-This file is sorry-free
+`dim` gives the dimension in each integer weight. The monomials `G` in `E₄`,
+`E₆`, and `Δ` form the basis `GBasis`, with leading coefficients equal to one
+and increasing orders of vanishing. This yields `ModularFormOver.sturm_bound`
+and the rank and finrank formulas.
+
+When `6` is invertible in the coefficient ring, monomials `P` in `E₄` and `E₆`
+alone form the alternative basis `PBasis`.
 -/
 
 open ModularForm MatrixGroups UpperHalfPlane ModularFormOver PowerSeries
@@ -17,6 +20,8 @@ open ModularForm MatrixGroups UpperHalfPlane ModularFormOver PowerSeries
 
 namespace ModularFormOver.Basis
 
+/-- The dimension of level-one modular forms in natural weight, defined recursively in steps of
+twelve. -/
 def dimNat : ℕ → ℕ
   | 0 => 1 | 4 => 1 | 6 => 1
   | 8 => 1 | 10 => 1 | 14 => 1
@@ -26,15 +31,18 @@ def dimNat : ℕ → ℕ
   | _ => 0
 
 
+/-- The level-one dimension function for integer weights, equal to zero at negative weights. -/
 def dim : ℤ → ℕ
   | Int.ofNat n => dimNat n
   | Int.negSucc _ => 0
 
 
+/-- The closed dimension formula, with the exceptional residue class `k ≡ 2 [ZMOD 12]`. -/
 def dim' (k : ℤ) : ℕ :=
   if 0 ≤ k then if Even k then if k ≡ 2 [ZMOD 12] then k.toNat / 12 else k.toNat / 12 + 1
     else 0 else 0
 
+/-- The recursive dimension formula agrees with the closed formula in natural weights. -/
 theorem dimNat_eq_dim' (n : ℕ) : dimNat n = dim' n := by
   fun_induction dimNat n with
   | case9 n _ _ _ _ _ _ h =>
@@ -47,20 +55,24 @@ theorem dimNat_eq_dim' (n : ℕ) : dimNat n = dim' n := by
     simp only [dim', Int.even_iff, Int.ModEq] at *
     grind
 
+/-- The recursive and closed dimension functions agree for all integer weights. -/
 theorem dim_eq_dim' : dim = dim' := by
   funext k
   cases k with
   | ofNat n => exact dimNat_eq_dim' n
   | negSucc n => simp [dim, dim']
 
+/-- The dimension function vanishes in negative weights. -/
 theorem dim_neg (k : ℤ) (hk : k < 0) : dim k = 0 := by
   simp_all only [dim_eq_dim', dim', ite_eq_right_iff, isEmpty_Prop, not_le, IsEmpty.forall_iff]
 
 
+/-- The level-one dimension is at most `k.toNat / 12 + 1`. -/
 theorem dim_le_div_twelve (k : ℤ) : dim k ≤ k.toNat / 12 + 1 := by
   rw [dim_eq_dim']
   grind [dim']
 
+/-- The complex space of level-one forms of weight `k` has rank `dim k`. -/
 theorem _root_.ModularForm.rank_eq_dim (k : ℤ) : Module.rank ℂ (ModularForm 𝒮ℒ k) = dim k := by
   rw [dim_eq_dim', dim']
   split_ifs with hk hk2 kcon
@@ -76,6 +88,8 @@ theorem _root_.ModularForm.rank_eq_dim (k : ℤ) : Module.rank ℂ (ModularForm 
 
 
 
+/-- A level-one form of natural weight vanishes if its Fourier expansion has order at least `dim
+k`. -/
 theorem _root_.ModularForm.better_sturm_bound_levelOne_nat {k : ℕ} {f : ModularForm 𝒮ℒ (k : ℤ)}
     (h : (dim k : ℕ∞) ≤ (qExpansion 1 f).order) : f = 0 := by
   induction k using Nat.strong_induction_on with | _ k ih =>
@@ -104,6 +118,8 @@ theorem _root_.ModularForm.better_sturm_bound_levelOne_nat {k : ℕ} {f : Modula
     exact (ENat.add_le_add_iff_right (ENat.one_ne_top)).mp h
 
 
+/-- A level-one form of integer weight vanishes if its Fourier expansion has order at least `dim
+k`. -/
 theorem _root_.ModularFormOver.better_sturm_bound_levelOne {k : ℤ} {f : ModularForm 𝒮ℒ k}
     (h : (dim k : ℕ∞) ≤ (qExpansion 1 f).order) : f = 0 := by
   rcases lt_or_ge k 0 with hk | hk
@@ -137,6 +153,7 @@ example : GpowersNat 16 = [![4,0,0], ![1,0,1]] := rfl
 
 example : GpowersNat 18 = [![3,1,0], ![0,1,1]] := rfl
 
+/-- The exponent triples for the weight-`k` basis, with an empty list at negative weights. -/
 def Gpowers : ℤ → List (Fin 3 → ℕ)
   | Int.ofNat n => GpowersNat n
   | Int.negSucc _ => []
@@ -232,6 +249,7 @@ theorem Gpowers_getElem_eq (k : ℤ) (n : ℕ) (hn : n < dim k) :
   | negSucc k => simp [dim] at hn
 
 
+/-- The weight-`k` monomial in `E₄`, `E₆`, and `Δ` whose Fourier expansion starts with `q^n`. -/
 noncomputable def G {R} [CommRing R] [Algebra R ℂ]
     (k : ℤ) (n : ℕ) (hn : n < dim k := by decide) : ModularFormOver R 𝒮ℒ k :=
   let p := (Gpowers k)[n]'(by rwa [Gpowers_length])
@@ -256,6 +274,8 @@ theorem G_eq {R} [CommRing R] [Algebra R ℂ]
   rw [Gpowers_getElem_eq k n hn]
   rfl
 
+/-- The Fourier expansion of `G k n` is the product of the corresponding expansions of `E₄`,
+`E₆`, and `Δ`. -/
 theorem qExp_G {R} [CommRing R] [Algebra R ℂ]
     (k : ℤ) (n : ℕ) (hn : n < dim k) :
     qExp (G (R := R) k n hn) =
@@ -306,6 +326,7 @@ private theorem qExp_discriminant_eq_shift_mul_X :
     simp [discProduct]
   simpa only [h0, map_zero, add_zero] using eq_shift_mul_X_add_const (qExp Δ)
 
+/-- The coefficient of degree `n` in `G k n` is one. -/
 theorem coeff_order_G {R} [CommRing R] [Algebra R ℂ] [FaithfulSMul R ℂ] (k : ℤ)
     (n : ℕ) (hn : n < dim k) : coeff R n (G (R := R) k n hn) = 1 := by
   rw [coeff_eq_iff, map_one, qExp_G k n hn, qExp_discriminant_eq_shift_mul_X,
@@ -317,6 +338,7 @@ theorem coeff_order_G {R} [CommRing R] [Algebra R ℂ] [FaithfulSMul R ℂ] (k :
     discriminant_qExp_coeff]
   simp [discProduct]
 
+/-- The coefficients of `G k c` vanish in degrees below `c`. -/
 theorem coeff_lt_order_G {R} [CommRing R] [Algebra R ℂ] [FaithfulSMul R ℂ]
     (k : ℤ) (c : ℕ) (hc : c < dim k) {n} (hn : n < c) :
     coeff R n (G (R := R) k c hc) = 0 := by
@@ -325,6 +347,7 @@ theorem coeff_lt_order_G {R} [CommRing R] [Algebra R ℂ] [FaithfulSMul R ℂ]
     coeff_mul_X_pow', ite_eq_right (Nat.not_le.mpr hn)]
 
 
+/-- The complex Fourier expansion of `G k n` has order exactly `n`. -/
 theorem order_G {R} [CommRing R] [Algebra R ℂ] [FaithfulSMul R ℂ] (k : ℤ)
     (n : ℕ) (hn : n < dim k) : order (qExp (G (R := ℂ) k n hn)) = n := by
   apply PowerSeries.order_eq_nat.mpr
@@ -338,6 +361,7 @@ theorem order_G {R} [CommRing R] [Algebra R ℂ] [FaithfulSMul R ℂ] (k : ℤ)
 
 
 
+/-- The `G` monomials of a fixed weight are linearly independent over the coefficient ring. -/
 theorem G_LI {R} [CommRing R] [Algebra R ℂ] [FaithfulSMul R ℂ] (k : ℤ) :
     LinearIndependent R (fun n : Fin (dim k) => G (R := R) k n.val n.isLt) := by
   classical
@@ -370,6 +394,7 @@ theorem G_LI {R} [CommRing R] [Algebra R ℂ] [FaithfulSMul R ℂ] (k : ℤ) :
     exact hcoeff
 
 
+/-- Compute coordinates in the `G` basis recursively from the initial Fourier coefficients. -/
 noncomputable def Gcoeffs {R} [CommRing R] [Algebra R ℂ] [FaithfulSMul R ℂ] {k}
     (f : ModularFormOver R 𝒮ℒ k) : (n : ℕ) → n < dim k → R
   | 0, _ => coeff R 0 f
@@ -439,6 +464,7 @@ theorem Gcoeffs_smul_G {R} [CommRing R] [Algebra R ℂ] [FaithfulSMul R ℂ]
         ring
 
 
+/-- The `G` monomials span all level-one modular forms of weight `k` over the coefficient ring. -/
 theorem G_span {R} [CommRing R] [Algebra R ℂ] (k : ℤ) :
     ⊤ ≤ Submodule.span R {G (R := R) k n.val n.isLt | n : Fin (dim k)} := by
   classical
@@ -481,11 +507,14 @@ theorem G_span {R} [CommRing R] [Algebra R ℂ] (k : ℤ) :
     Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
 
 
+/-- The basis of weight-`k` forms given by `G` monomials with leading coefficient one and
+increasing vanishing order. -/
 noncomputable def GBasis (R) [CommRing R] [Algebra R ℂ] [FaithfulSMul R ℂ] (k : ℤ) :
     Module.Basis (Fin (dim k)) R (ModularFormOver R 𝒮ℒ k) :=
   Module.Basis.mk (G_LI k) (G_span k)
 
 
+/-- The element indexed by `c` in `GBasis` is the corresponding `G` monomial. -/
 @[simp] theorem GBasis_apply {R} [CommRing R] [Algebra R ℂ] [FaithfulSMul R ℂ]
     (k : ℤ) (c : Fin (dim k)) : GBasis R k c = G k c.1 c.2 :=
   Module.Basis.mk_apply ..
@@ -500,13 +529,17 @@ open ModularFormOver.Basis
 
 variable {R : Type} [CommRing R] [Algebra R ℂ] [FaithfulSMul R ℂ]
 
+/-- The rank of level-one forms over a ring with the strong rank condition is `dim k`. -/
 theorem dimension_eq_dim [StrongRankCondition R] : Module.rank R (ModularFormOver R 𝒮ℒ k) = dim k := by
   rw [rank_eq_card_basis <| GBasis R k, Fintype.card_fin]
 
+/-- The finrank of level-one forms over a ring with the strong rank condition is `dim k`. -/
 theorem finrank_eq_dim [StrongRankCondition R] : Module.finrank R (ModularFormOver R 𝒮ℒ k) = dim k := by
   rw [Module.finrank_eq_card_basis <| GBasis R k, Fintype.card_fin]
 
 
+/-- Forms of order at least `dim k - 1` are equal if their Fourier coefficients in that
+degree agree. -/
 theorem eq_of_eq_order_max {f g : ModularFormOver R 𝒮ℒ k}
     (hao : (dim k - 1 : ℕ∞) ≤ (qExp f).order)
     (hbo : (dim k - 1 : ℕ∞) ≤ (qExp g).order)
@@ -530,6 +563,8 @@ theorem eq_of_eq_order_max {f g : ModularFormOver R 𝒮ℒ k}
   · have hn' : n = dim k - 1 := by omega
     simpa [hn'] using heq
 
+/-- A form with vanishing order at least `dim k - 1` is a scalar multiple of the last `G` basis
+element. -/
 theorem eq_G_of_order_max (f : ModularFormOver R 𝒮ℒ k)
     (hk : 0 < dim k) (hord : (dim k - 1 : ℕ∞) ≤ (qExp f).order) :
     f = coeff R (dim k - 1) f • G (k := k) (dim k - 1) (by omega) := by
@@ -568,6 +603,7 @@ def PpowersNat : ℕ → List (Fin 2 → ℕ)
     | p :: ps => ![p 0, p 1 + 2] :: (p :: ps).map (fun q => ![q 0 + 3, q 1])
   | _ => []
 
+/-- The exponent pairs for the weight-`k` monomials in `E₄` and `E₆`. -/
 def Ppowers : ℤ → List (Fin 2 → ℕ)
   | Int.ofNat n => PpowersNat n
   | Int.negSucc _ => []
@@ -666,6 +702,7 @@ theorem Ppowers_getElem_eq (k : ℤ) (n : ℕ) (hn : n < dim k) :
     fin_cases i <;> dsimp at * <;> omega
   | negSucc k => simp [dim] at hn
 
+/-- The weight-`k` monomial in `E₄` and `E₆` specified by the `n`-th exponent pair. -/
 noncomputable def P {R} [CommRing R] [Algebra R ℂ]
     (k : ℤ) (n : ℕ) (hn : n < dim k := by decide) : ModularFormOver R 𝒮ℒ k :=
   let p := (Ppowers k)[n]'(by rwa [Ppowers_length])
@@ -688,6 +725,8 @@ theorem P_eq {R} [CommRing R] [Algebra R ℂ]
   rw [Ppowers_getElem_eq k n hn]
   rfl
 
+/-- The Fourier expansion of `P k n` is the corresponding product of the expansions of `E₄` and
+`E₆`. -/
 theorem qExp_P {R} [CommRing R] [Algebra R ℂ]
     (k : ℤ) (n : ℕ) (hn : n < dim k) :
     qExp (P (R := R) k n hn) =
@@ -729,6 +768,141 @@ dsimproc reduceP (@P _ _ _ _ _ _) := fun e => do
     result := value
   return .continue result
 
+
+
+/-- Every monomial in the family `P` has constant q-expansion coefficient one. -/
+@[simp] theorem qExp_P_coeff_zero {R} [CommRing R] [Algebra R ℂ]
+    (k : ℤ) (n : ℕ) (hn : n < dim k) :
+    (qExp (P (R := R) k n hn)).coeff 0 = 1 := by
+  rw [qExp_P, coeff_zero_eq_constantCoeff, map_mul, map_pow, map_pow]
+  simp [← coeff_zero_eq_constantCoeff, E₄_qExp_coeff, E₆_qExp_coeff]
+
+/-- The leading coefficient of `P k n` is its constant coefficient, which is one. -/
+@[simp] theorem coeff_zero_P {R} [CommRing R] [Algebra R ℂ] [FaithfulSMul R ℂ]
+    (k : ℤ) (n : ℕ) (hn : n < dim k) : coeff R 0 (P (R := R) k n hn) = 1 := by
+  rw [coeff_eq_iff, map_one, qExp_P_coeff_zero]
+
+/-- Every `P` monomial has Fourier expansion of order zero. -/
+@[simp] theorem order_P {R} [CommRing R] [Algebra R ℂ]
+    (k : ℤ) (n : ℕ) (hn : n < dim k) : order (qExp (P (R := R) k n hn)) = 0 := by
+  apply PowerSeries.order_eq_nat.mpr
+  exact ⟨by simp, by simp⟩
+
+private theorem dim_monomial (a b : ℕ) :
+    dim (a * 4 + b * 6 : ℕ) = a / 3 + b / 2 + 1 := by
+  rw [dim_eq_dim', dim']
+  simp only [Int.natCast_nonneg, Int.even_iff, Int.ModEq, Int.toNat_natCast, ite_true]
+  split_ifs <;> omega
+
+private theorem monomial_mem_span_P {R} [CommRing R] [Algebra R ℂ]
+    (k : ℤ) (a b : ℕ) (hw : (a : ℤ) * 4 + b * 6 = k) :
+    (((E₄.pow a).mul (E₆.pow b)).cast hw : ModularFormOver R 𝒮ℒ k) ∈
+      Submodule.span R {P (R := R) k n.val n.isLt | n : Fin (dim k)} := by
+  have hk : k = (a * 4 + b * 6 : ℕ) := by omega
+  have hd : dim k = a / 3 + b / 2 + 1 := by rw [hk]; exact dim_monomial a b
+  have hn : a / 3 < dim k := by omega
+  have hP : P (R := R) k (a / 3) hn =
+      (((E₄.pow a).mul (E₆.pow b)).cast hw : ModularFormOver R 𝒮ℒ k) := by
+    have hb : k.toNat % 4 / 2 + 2 * (dim k - 1 - a / 3) = b := by
+      rw [hd, hk, Int.toNat_natCast]
+      omega
+    have ha : (k.toNat - 6 * b) / 4 = a := by
+      rw [hk, Int.toNat_natCast]
+      omega
+    apply ext₂
+    intro z
+    simp only [ModularFormOver.cast_apply]
+    change ((E₄.pow _).mul (E₆.pow _)) z = ((E₄.pow a).mul (E₆.pow b)) z
+    simp only [mul_apply, pow_apply]
+    rw [Ppowers_getElem_eq k (a / 3) hn]
+    change E₄ z ^ ((k.toNat - 6 * (k.toNat % 4 / 2 + 2 * (dim k - 1 - a / 3))) / 4) *
+      E₆ z ^ (k.toNat % 4 / 2 + 2 * (dim k - 1 - a / 3)) = E₄ z ^ a * E₆ z ^ b
+    rw [hb, ha]
+  rw [← hP]
+  exact Submodule.subset_span ⟨⟨a / 3, hn⟩, rfl⟩
+
+private theorem delta_monomial_mem_span_P {R} [CommRing R] [Algebra R ℂ]
+    [Invertible (6 : R)] (k : ℤ) (c a b : ℕ)
+    (hw : (a : ℤ) * 4 + b * 6 + c * 12 = k) :
+    ((((E₄.pow a).mul (E₆.pow b)).mul ((Δ).pow c)).cast hw : ModularFormOver R 𝒮ℒ k) ∈
+      Submodule.span R {P (R := R) k n.val n.isLt | n : Fin (dim k)} := by
+  induction c generalizing a b with
+  | zero =>
+    have hw' : (a : ℤ) * 4 + b * 6 = k := by simpa using hw
+    have heq :
+        ((((E₄.pow a).mul (E₆.pow b)).mul ((Δ).pow 0)).cast hw :
+          ModularFormOver R 𝒮ℒ k) = ((E₄.pow a).mul (E₆.pow b)).cast hw' := by
+      apply ext₂
+      intro z
+      have hcoe {j : ℤ} (f : ModularFormOver ℤ 𝒮ℒ j) :
+          (↑f : ModularFormOver R 𝒮ℒ j) z = f z := rfl
+      simp only [hcoe, cast_apply, mul_apply, pow_apply, pow_zero, mul_one]
+    rw [heq]
+    exact monomial_mem_span_P k a b hw'
+  | succ c ih =>
+    have hw₄ : ((a + 3 : ℕ) : ℤ) * 4 + b * 6 + c * 12 = k := by omega
+    have hw₆ : (a : ℤ) * 4 + ((b + 2 : ℕ) : ℤ) * 6 + c * 12 = k := by omega
+    let f₄ : ModularFormOver R 𝒮ℒ k :=
+      (((E₄.pow (a + 3)).mul (E₆.pow b)).mul ((Δ).pow c)).cast hw₄
+    let f₆ : ModularFormOver R 𝒮ℒ k :=
+      (((E₄.pow a).mul (E₆.pow (b + 2))).mul ((Δ).pow c)).cast hw₆
+    have hf₄ := ih (a + 3) b hw₄
+    have hf₆ := ih a (b + 2) hw₆
+    have heq :
+        ((((E₄.pow a).mul (E₆.pow b)).mul ((Δ).pow (c + 1))).cast hw :
+          ModularFormOver R 𝒮ℒ k) = ⅟ (1728 : R) • (f₄ - f₆) := by
+      apply ext₂
+      intro z
+      have hcoe {j : ℤ} (f : ModularFormOver ℤ 𝒮ℒ j) :
+          (↑f : ModularFormOver R 𝒮ℒ j) z = f z := rfl
+      have hΔ := congrArg (fun f : ModularFormOver R 𝒮ℒ 12 => f z)
+        (discriminant_eq_E₄E₆ (R := R))
+      simp only [tower_apply, smul_apply, sub_apply, cast_apply, pow_apply,
+        Algebra.smul_def] at hΔ
+      change Δ z = algebraMap R ℂ (⅟ (1728 : R)) * (E₄ z ^ 3 - E₆ z ^ 2) at hΔ
+      dsimp only [f₄, f₆]
+      simp only [hcoe, smul_apply, sub_apply, cast_apply, mul_apply, pow_apply,
+        Algebra.smul_def]
+      change E₄ z ^ a * E₆ z ^ b * Δ z ^ (c + 1) =
+        algebraMap R ℂ (⅟ (1728 : R)) *
+          (E₄ z ^ (a + 3) * E₆ z ^ b * Δ z ^ c -
+            E₄ z ^ a * E₆ z ^ (b + 2) * Δ z ^ c)
+      rw [pow_succ, hΔ]
+      simp only [pow_add]
+      ring
+    rw [heq]
+    exact Submodule.smul_mem _ _ (Submodule.sub_mem _ hf₄ hf₆)
+
+/-- The monomials in `P` span when six is invertible in the coefficient ring. -/
+theorem P_span {R} [CommRing R] [Algebra R ℂ] [Invertible (6 : R)] (k : ℤ) :
+    ⊤ ≤ Submodule.span R {P (R := R) k n.val n.isLt | n : Fin (dim k)} := by
+  refine (G_span (R := R) k).trans (Submodule.span_le.mpr ?_)
+  rintro _ ⟨i, rfl⟩
+  dsimp only [G]
+  apply delta_monomial_mem_span_P
+
+/-- The spanning family `P` is linearly independent, since it has `dim k` elements. -/
+theorem P_LI {R} [CommRing R] [Algebra R ℂ] [FaithfulSMul R ℂ]
+    [Invertible (6 : R)] (k : ℤ) :
+    LinearIndependent R (fun n : Fin (dim k) => P (R := R) k n.val n.isLt) := by
+  nontriviality R
+  apply linearIndependent_of_top_le_span_of_card_eq_finrank (P_span (R := R) k)
+  simpa only [Fintype.card_fin] using (finrank_eq_dim (R := R) (k := k)).symm
+
+
+/-- The basis of weight-`k` forms consisting of monomials in `E₄` and `E₆`, available when `6` is
+invertible. -/
+noncomputable def PBasis (R) [CommRing R] [Algebra R ℂ]
+  [FaithfulSMul R ℂ] [Invertible (6 : R)] (k : ℤ) :
+    Module.Basis (Fin (dim k)) R (ModularFormOver R 𝒮ℒ k) :=
+  Module.Basis.mk (P_LI k) (P_span k)
+
+
+/-- The element indexed by `c` in `PBasis` is the corresponding `P` monomial. -/
+@[simp] theorem PBasis_apply {R} [CommRing R] [Algebra R ℂ]
+  [FaithfulSMul R ℂ] [Invertible (6 : R)] (k : ℤ) (c : Fin (dim k)) :
+    PBasis R k c = P k c.1 c.2 :=
+  Module.Basis.mk_apply ..
 
 
 end Basis

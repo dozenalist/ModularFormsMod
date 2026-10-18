@@ -2,6 +2,12 @@ import ModularFormsMod.ModularFormOver.PInteger
 
 
 /-!
+# Rational Eisenstein series and scalar extension
+
+`ModularFormOver.Eis` bundles the integer-weight Eisenstein series with its
+rationality proof. Its Fourier coefficients are expressed using Bernoulli
+numbers and divisor sums, and rational forms extend to characteristic-zero
+fields equipped with an algebra map to `ℂ`.
 -/
 
 
@@ -9,6 +15,8 @@ import ModularFormsMod.ModularFormOver.PInteger
 open ModularForm ModularFormOver UpperHalfPlane MatrixGroups ArithmeticFunction.sigma
 
 
+/-- Forms with rational Fourier coefficients extend to any characteristic-zero field equipped
+with an algebra map to `ℂ`. -/
 instance ModularFormOverClass.towerℚ {F : Type*} [FunLike F ℍ ℂ]
   {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} [hF : ModularFormOverClass F ℚ Γ k]
     (R : Type) [Field R] [CharZero R] [Algebra R ℂ] : ModularFormOverClass F R Γ k :=
@@ -20,6 +28,7 @@ noncomputable instance {Γ k} (R : Type) [Field R] [CharZero R] [Algebra R ℂ] 
 
 namespace ModularFormOver
 
+/-- The integer-weight normalized Eisenstein series, regarded as a modular form over `ℚ`. -/
 noncomputable def Eis (k : ℤ) : ModularFormOver ℚ 𝒮ℒ k where
   toModularForm := ModularForm.Eis k
   isOver' := by
@@ -33,6 +42,8 @@ noncomputable def Eis (k : ℤ) : ModularFormOver ℚ 𝒮ℒ k where
     · exact zero_mem _
 
 
+/-- For even weights at least four, the Eisenstein coefficients are given by Bernoulli numbers
+and divisor sums. -/
 theorem coeff_Eis {k : ℤ} (hk : 3 ≤ k) (hk2 : Even k) (n : ℕ)
   (R S : Type := ℚ) [Field R] [CharZero R] [Algebra R ℂ] [Field S]
     [CharZero S] [Algebra R S] [Algebra S ℂ] [IsScalarTower R S ℂ] :

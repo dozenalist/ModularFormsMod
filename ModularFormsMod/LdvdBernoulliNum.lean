@@ -1,5 +1,14 @@
 import Mathlib.NumberTheory.Bernoulli
 
+/-!
+# Bernoulli coefficients at weight `p - 1`
+
+For a prime `p ≥ 5`, the numerator of `2 * (p - 1) / bernoulli (p - 1)`
+vanishes modulo `p`. The proof develops a local von Staudt–Clausen argument.
+The resulting nonnegative valuation, also proved for the small primes, is used
+to construct Eisenstein series with coefficients in `ℤ(p)`.
+-/
+
 open Nat Finset Finset.Nat PowerSeries
 
 private theorem rat_den_sum_dvd_prod_den {α : Type*} (s : Finset α) (f : α → ℚ) :
@@ -266,6 +275,7 @@ end Bernoulli
 
 end vonStaudtClausen
 
+/-- For a prime `ℓ ≥ 5`, the numerator of `2 * (ℓ - 1) / bernoulli (ℓ - 1)` is zero modulo `ℓ`. -/
 theorem ldvd_bernoulli_num (ℓ) (hprime : Nat.Prime ℓ) (hg5 : ℓ ≥ 5) :
     (2 * ↑(ℓ - 1) / bernoulli (ℓ - 1)).num ≡ 0 [ZMOD ℓ] := by
   let : Fact (Nat.Prime ℓ) := ⟨hprime⟩
@@ -349,6 +359,8 @@ theorem ldvd_bernoulli_num (ℓ) (hprime : Nat.Prime ℓ) (hg5 : ℓ ≥ 5) :
     rwa [htarget]
 
 
+/-- The Eisenstein coefficient factor `2 * (p - 1) / bernoulli (p - 1)` has nonnegative p-adic
+valuation. -/
 theorem padicVal_bernoulli_sub_one (p) [Fact p.Prime] :
     padicValRat p (2 * (p - 1) / bernoulli (p - 1)) ≥ 0 := by
   by_cases hp : p ≥ 5

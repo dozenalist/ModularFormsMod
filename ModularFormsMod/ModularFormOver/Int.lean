@@ -10,6 +10,12 @@ import ModularFormsMod.qExp_discriminant
 
 
 /-!
+# Integral Eisenstein series and the discriminant
+
+The normalized forms `E₄`, `E₆`, and `Δ` have integer Fourier coefficients.
+This file bundles them as forms over `ℤ`, gives their coefficient formulas
+after scalar extension, defines the formal series for `E₂`, and proves
+the identity `1728 • Δ = E₄³ - E₆²` over the integers.
 -/
 
 #check ModularForm.restrict
@@ -96,6 +102,7 @@ private lemma bernoulli_fourteen : bernoulli 14 = 7 / 6 := by
 end bernoulli
 
 
+/-- The normalized weight-four Eisenstein series, bundled with its integral Fourier coefficients. -/
 noncomputable def E₄ : ModularFormOver ℤ 𝒮ℒ 4 where
   toModularForm := ModularForm.E₄
   isOver' := by
@@ -106,6 +113,7 @@ noncomputable def E₄ : ModularFormOver ℤ 𝒮ℒ 4 where
     use if n = 0 then 1 else 240 * σ 3 n
     norm_num
 
+/-- The normalized weight-six Eisenstein series, bundled with its integral Fourier coefficients. -/
 noncomputable def E₆ : ModularFormOver ℤ 𝒮ℒ 6 where
   toModularForm := ModularForm.E₆
   isOver' := by
@@ -116,6 +124,7 @@ noncomputable def E₆ : ModularFormOver ℤ 𝒮ℒ 6 where
     use if n = 0 then 1 else -504 * σ 5 n
     norm_num
 
+/-- The weight-twelve discriminant cusp form, regarded as a modular form over `ℤ`. -/
 noncomputable def discriminant : ModularFormOver ℤ 𝒮ℒ 12 where
   toModularForm := CuspForm.discriminant
   isOver' := by
@@ -125,18 +134,24 @@ noncomputable def discriminant : ModularFormOver ℤ 𝒮ℒ 12 where
 scoped notation "Δ" => discriminant
 
 
+/-- The complex Fourier coefficients of `E₄` are one in degree zero and `240 * σ 3 n` in positive
+degrees. -/
 theorem E₄_qExp_coeff (n : ℕ) : (qExp E₄).coeff n =
     if n = 0 then (1 : ℂ) else 240 * σ 3 n := by
   simp only [qExp_SL2Z, ← toModularForm_coe, E₄, ModularForm.E₄]
   rw [EisensteinSeries.E_qExpansion_coeff (by decide) (by decide), bernoulli_four]
   norm_num
 
+/-- The complex Fourier coefficients of `E₆` are one in degree zero and `-504 * σ 5 n` in
+positive degrees. -/
 theorem E₆_qExp_coeff (n : ℕ) : (qExp E₆).coeff n =
     if n = 0 then (1 : ℂ) else -504 * σ 5 n := by
   simp only [qExp_SL2Z, ← toModularForm_coe, E₆, ModularForm.E₆]
   rw [EisensteinSeries.E_qExpansion_coeff (by decide) (by decide), bernoulli_six]
   norm_num
 
+/-- The complex Fourier coefficients of `Δ` are the stabilized coefficients of the finite
+discriminant products. -/
 theorem discriminant_qExp_coeff (n : ℕ) :
     (qExp discriminant).coeff n = (discProduct n).coeff n := by
   simp only [qExp_SL2Z, ← toModularForm_coe, discriminant, qExpansion_discriminant,
@@ -145,6 +160,8 @@ theorem discriminant_qExp_coeff (n : ℕ) :
 variable {R S} [CommRing R] [Algebra R ℂ] [CommRing S]
   [Algebra S ℂ] [FaithfulSMul S ℂ] [Algebra R S] [IsScalarTower R S ℂ]
 
+/-- The divisor-sum formula for the Fourier coefficients of `E₄` in a compatible coefficient
+ring. -/
 theorem coeff_E₄ (n : ℕ) : coeff R n E₄ S = if n = 0 then (1 : S)
     else 240 * σ 3 n := by
   rw [coeff_eq_iff, E₄_qExp_coeff]
@@ -154,6 +171,8 @@ theorem coeff_E₄ (n : ℕ) : coeff R n E₄ S = if n = 0 then (1 : S)
       map_natCast, Nat.cast_ofNat]
 
 
+/-- The divisor-sum formula for the Fourier coefficients of `E₆` in a compatible coefficient
+ring. -/
 theorem coeff_E₆ (n : ℕ) : coeff R n E₆ S =
     if n = 0 then (1 : S) else -504 * σ 5 n := by
   rw [coeff_eq_iff, E₆_qExp_coeff]
@@ -174,6 +193,8 @@ theorem coeff_E₆ (n : ℕ) : coeff R n E₆ S =
 @[simp] theorem coeff_one_E₆ : coeff R 1 E₆ S = -504 := by
   simp [coeff_E₆]
 
+/-- The Fourier coefficient of `Δ` in degree `n` is the degree-`n` coefficient of `discProduct
+n`. -/
 theorem coeff_discriminant (n : ℕ) : coeff R n Δ S = (discProduct n).coeff n := by
   rw [coeff_eq_iff, discriminant_qExp_coeff, map_coeff_discProduct]
 
@@ -197,14 +218,17 @@ theorem coeff_discriminant (n : ℕ) : coeff R n Δ S = (discProduct n).coeff n 
 
 
 
+/-- The formal Eisenstein series `E₂ = 1 - 24 ∑ n ≥ 1, σ₁(n) X^n` over a coefficient ring. -/
 noncomputable def E2fourier (R : Type := ℤ) [CommRing R] [Algebra R ℂ] : PowerSeries R :=
   .mk fun n => if n = 0 then 1 else -24 * σ 1 n
 
+/-- The coefficient formula defining the formal weight-two Eisenstein series. -/
 @[simp] theorem coeff_E2fourier (R : Type) [CommRing R] [Algebra R ℂ] (n : ℕ) :
     (E2fourier R).coeff n = if n = 0 then 1 else (-24 : R) * σ 1 n := by
   rw [E2fourier, PowerSeries.coeff_mk]
 
 
+/-- The integral relation `1728 • Δ = E₄³ - E₆²`, with the powers transported to weight twelve. -/
 theorem smul_discriminant_eq_E₄E₆ :
     1728 • Δ = (E₄.pow 3).cast (by rfl) - (E₆.pow 2).cast (by rfl) :=
   ext₂ fun z => by

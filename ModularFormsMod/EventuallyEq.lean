@@ -1,7 +1,11 @@
 import Mathlib.RingTheory.PowerSeries.Basic
 
-/-
-This file defines `EventuallyEq` and proves some basic facts about it
+/-!
+# Eventual agreement of power-series coefficients
+
+`PowerSeries.eventuallyEq` compares sequences whose coefficients agree eventually
+in every bounded degree. The relation is an equivalence and is preserved by
+addition, multiplication, and natural powers.
 -/
 
 open PowerSeries Finset Finset.HasAntidiagonal
@@ -10,31 +14,27 @@ variable {α : Type*}
 
 namespace PowerSeries
 
-/-- Two sequences of power series are eventually equal if for any coefficient n,
-there is some number m, such that these sequences match on all coeffients
-less than n from the index m onward. As an example, the function
-
-`fun n ↦ ∑ i ∈ range n, (natpart i) * (X : α⟦X⟧) ^ i`
-
-is eventually equal to
-
-`fun n ↦ ∏ i ∈ range n, 1 / (1 - X ^ (i + 1))` -/
+/-- Two sequences of power series eventually agree if, for every degree bound `n`,
+there is an index beyond which all their coefficients in degrees at most `n` agree. -/
 def eventuallyEq [Semiring α] (f h : ℕ → α⟦X⟧) : Prop :=
   ∀ n, ∃ m, ∀ k ≤ n, ∀ j ≥ m, coeff k (f j) = coeff k (h j)
 
 @[inherit_doc]
 scoped infixl : 25 (priority := high) " ⟶ " => eventuallyEq
 
+/-- Coefficientwise eventual agreement is reflexive. -/
 @[refl]
 theorem eventuallyEq.refl [Semiring α] (f : ℕ → α⟦X⟧) : f ⟶ f :=
   fun _ => ⟨0, fun _ _ _ _ => rfl⟩
 
+/-- Coefficientwise eventual agreement is symmetric. -/
 @[symm]
 theorem eventuallyEq.symm [Semiring α] (f h : ℕ → α⟦X⟧) : (f ⟶ h) → (h ⟶ f) := by
   intro eq n
   obtain ⟨m, fo⟩ := eq n
   use m, fun n ngm j jgm => fo n ngm j jgm |>.symm
 
+/-- Coefficientwise eventual agreement is transitive. -/
 @[trans]
 theorem eventuallyEq.trans [Semiring α] (f h g : ℕ → α⟦X⟧) :
     (f ⟶ h) → (h ⟶ g) → (f ⟶ g) := by
@@ -50,6 +50,7 @@ instance [Semiring α] : IsEquiv (ℕ → α⟦X⟧) eventuallyEq where
   symm := eventuallyEq.symm
   trans := eventuallyEq.trans
 
+/-- Adding eventually agreeing sequences preserves eventual agreement in every bounded degree. -/
 @[gcongr]
 theorem eventuallyEq_add [Semiring α] {a b c d : ℕ → α⟦X⟧} (hab : a ⟶ b) (hcd : c ⟶ d) :
     a + c ⟶ b + d := by
@@ -60,6 +61,8 @@ theorem eventuallyEq_add [Semiring α] {a b c d : ℕ → α⟦X⟧} (hab : a �
   simp only [Pi.add_apply, map_add]
   rw [fo n nle j <| le_of_max_le_left jg, go n nle j <| le_of_max_le_right jg]
 
+/-- Multiplying eventually agreeing sequences preserves eventual agreement in every bounded
+degree. -/
 @[gcongr]
 theorem eventuallyEq_mul [Semiring α] {a b c d : ℕ → α⟦X⟧} (hab : a ⟶ b) (hcd : c ⟶ d) :
     a * c ⟶ b * d := by
@@ -76,6 +79,7 @@ theorem eventuallyEq_mul [Semiring α] {a b c d : ℕ → α⟦X⟧} (hab : a �
     · exact antidiagonal.snd_le xin |> trans <| nle
     · exact le_of_max_le_right jg
 
+/-- Natural powers preserve coefficientwise eventual agreement. -/
 @[gcongr]
 theorem eventuallyEq_pow [Semiring α] {a b : ℕ → α⟦X⟧} (hab : a ⟶ b) (n : ℕ) :
     a ^ n ⟶ b ^ n := by
@@ -84,6 +88,7 @@ theorem eventuallyEq_pow [Semiring α] {a b : ℕ → α⟦X⟧} (hab : a ⟶ b)
   | succ => simp only [pow_succ]; gcongr
 
 
+/-- View a sequence of polynomials as a sequence of formal power series. -/
 def lift [Semiring α] (a : ℕ → Polynomial α) : ℕ → α ⟦X⟧ :=
   fun n ↦ ↑(a n)
 
@@ -91,6 +96,8 @@ def lift [Semiring α] (a : ℕ → Polynomial α) : ℕ → α ⟦X⟧ :=
   lift a n = ↑(a n) := rfl
 
 
+/-- A sequence eventually agrees with zero exactly when its coefficients in each bounded degree
+eventually vanish. -/
 theorem eventuallyEq_zero_iff [Semiring α] {a : ℕ → α⟦X⟧} :
     (a ⟶ 0) ↔ ∀ n, ∃ m, ∀ k ≤ n, ∀ j ≥ m, coeff k (a j) = 0 := by
   unfold eventuallyEq; simp only [Pi.zero_apply, map_zero]

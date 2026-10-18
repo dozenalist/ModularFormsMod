@@ -15,6 +15,7 @@ open ModularForm CongruenceSubgroup HeckeRing.GL2 Matrix.SpecialLinearGroup
 
 namespace ModularFormOver
 
+/-- The trivial complex character of the unit group of `ZMod N`. -/
 def trivialChar (N : ℕ) : (ZMod N)ˣ →* ℂˣ := 1
 
 set_option maxHeartbeats 1000000 in
@@ -50,15 +51,20 @@ def HeckeOver (R : Type*) [CommRing R] [Algebra R ℂ] (N : ℕ) [NeZero N] :
     exact hT k ((S k) f) hSc hSo
 
 
+/-- Forget the coefficient-preservation condition and retain the family of complex linear
+endomorphisms. -/
 def HeckeOver.toEnd (R : Type*) [CommRing R] [Algebra R ℂ] (N : ℕ) [NeZero N] :
     HeckeOver R N →+* (∀ k : ℤ, Module.End ℂ (ModularForm ((Gamma1 N).map (mapGL ℝ)) k)) :=
   (HeckeOver R N).subtype
 
+/-- Include one ring of coefficient-preserving operators in another using a supplied containment. -/
 def HeckeOver.inclusion {R S : Type*} [CommRing R] [Algebra R ℂ]
     [CommRing S] [Algebra S ℂ] (N : ℕ) [NeZero N]
     (h : HeckeOver R N ≤ HeckeOver S N) : HeckeOver R N →+* HeckeOver S N :=
   Subring.inclusion h
 
+/-- Regard the same operator over `S` after proving preservation of its trivial-character forms
+over `S`. -/
 def HeckeOver.changeCoeff {R S : Type*} [CommRing R] [Algebra R ℂ]
     [CommRing S] [Algebra S ℂ] (N : ℕ) [NeZero N]
     (T : HeckeOver R N)
@@ -268,11 +274,12 @@ theorem T_p_coeff (N : ℕ) [NeZero N] (p : ℕ) [Fact p.Prime]
     (dvd_trans hddiv (Nat.gcd_dvd_right m p))
   simp [trivialChar, hdN, ModularForm.qExp_def]
 
-/-- The factor `d^(k - 1)` in the `T_p` coefficient formula, represented in `ℤ[1/p]`.
-On divisors of `p` this is either `1` or the indicated power of the unit `p`. -/
+/-- The unit represented by `p` in the localization `ℤ[1/p]`. -/
 noncomputable def T_p.localUnit (p : ℕ) [NeZero p] : (ℤ[1/(p : ℤ)])ˣ :=
   (IsLocalization.Away.algebraMap_isUnit (p : ℤ)).unit
 
+/-- The factor `d^(k - 1)` for divisors of `p`, represented by a power of the unit `p` in
+`ℤ[1/p]`. -/
 noncomputable def T_p.coeffFactor (p : ℕ) [NeZero p] (k : ℤ) (d : ℕ) : ℤ[1/(p : ℤ)] :=
   if d = 1 then 1 else
     ((T_p.localUnit p ^ (k - 1) : (ℤ[1/(p : ℤ)])ˣ) : ℤ[1/(p : ℤ)])
@@ -339,11 +346,14 @@ noncomputable instance T_p.coeToRat (N : ℕ) [NeZero N] (p : ℕ) [Fact p.Prime
       (HeckeOver ℚ N) where
   coe := T_n N p hpN
 
+/-- The distinguished prime Hecke operator over `ℤ[1/p]` coerces to the rational operator `T_n N
+p`. -/
 @[simp] theorem coe_T_p (N : ℕ) [NeZero N] (p : ℕ) [Fact p.Prime]
   (hpN : Nat.Coprime p N := by simp) :
     ((T_p N p hpN : HeckeOver ℚ N)) = T_n N p hpN := rfl
 
 
+/-- Regard the distinguished prime Hecke operator over a compatible ring containing `ℤ[1/p]`. -/
 noncomputable instance Tp.coeToRing (N : ℕ) [NeZero N] (p : ℕ) [Fact p.Prime]
     {R : Type*} [CommRing R] [Algebra R ℂ]
     [Algebra (ℤ[1/(p : ℤ)]) R]
@@ -412,12 +422,13 @@ noncomputable instance Tp.coeToRing (N : ℕ) [NeZero N] (p : ℕ) [Fact p.Prime
     rw [map_mul, hlocalPow d hdp, hc']
     simp [trivialChar, hdN]
 
+/-- The rational coercion of the distinguished prime Hecke operator agrees with `T_n N p`. -/
 @[simp] theorem coe_Tp (N : ℕ) [NeZero N] (p : ℕ) [Fact p.Prime]
   (hpN : Nat.Coprime p N := by simp) :
     ((T_p N p hpN : HeckeOver ℚ N)) = T_n N p hpN := rfl
 
 /-- The rational Hecke operator `T_n` acts on forms over any characteristic-zero field
-which is a `ℂ`-algebra. -/
+equipped with an algebra map to `ℂ`. -/
 noncomputable instance Tn.coeToField (N : ℕ) [NeZero N] (n : ℕ) [NeZero n]
     (K : Type*) [Field K] [CharZero K] [Algebra K ℂ] (hn : n.Coprime N := by simp) :
     CoeDep (HeckeOver ℚ N) (T_n N n hn) (HeckeOver K N) where

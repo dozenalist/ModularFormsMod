@@ -1,5 +1,14 @@
 import ModularFormsMod.ModularFormOver.Defs
 
+/-!
+# Fourier expansions and extension of coefficient rings
+
+Modular forms over `R` remain defined over compatible larger coefficient rings.
+This file constructs their Fourier expansions and individual coefficients in
+such rings, proves compatibility with arithmetic and scalar extension, and
+establishes that a modular form is determined by its Fourier coefficients.
+-/
+
 set_option linter.style.header false
 
 
@@ -11,6 +20,7 @@ variable {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} {F : Type*} [FunLike F ℍ �
 
 
 
+/-- A Fourier expansion defined over `R` is also defined over a compatible algebra `S`. -/
 theorem isOver.tower {R : Type} [CommRing R] [Algebra R ℂ]
   [ModularFormOverClass F R Γ k] (S : Type) [CommRing S]
     [Algebra R S] [Algebra S ℂ] [IsScalarTower R S ℂ]
@@ -25,13 +35,16 @@ variable (R S : Type) [CommRing R] [Algebra R ℂ] [CommRing S] [Algebra R S]
   [Algebra S ℂ] [IsScalarTower R S ℂ] [hF : ModularFormOverClass F R Γ k]
 include hF
 
+/-- Every member of a class of forms over `R` is defined over a compatible larger ring `S`. -/
 theorem isOver_tower (f : F) : isOver S f :=
   isOver.tower S (isOver_self R f)
 
 
+/-- Extend the coefficient-ring condition of a modular-form class along an algebra tower. -/
 theorem _root_.ModularFormOverClass.tower : ModularFormOverClass F S Γ k where
   isOver_self f := isOver_tower R S f
 
+/-- Regard a form over `R` as a form over a compatible coefficient ring `S`. -/
 protected def tower {R : Type} (S : Type) [CommRing R] [Algebra R ℂ]
   [CommRing S] [Algebra R S] [Algebra S ℂ] [IsScalarTower R S ℂ]
     (f : ModularFormOver R Γ k) : ModularFormOver S Γ k :=
@@ -45,6 +58,7 @@ omit hF in
 
 
 
+/-- The Fourier expansion of a form over `R`, with coefficients in a compatible ring `S`. -/
 noncomputable def fourier (f : F) (S : Type := R) [CommRing S] [Algebra R S]
     [Algebra S ℂ] [IsScalarTower R S ℂ] [FaithfulSMul S ℂ] : PowerSeries S :=
   (isOver_tower R S f).fourier
@@ -53,6 +67,8 @@ variable (S : Type) [CommRing S] [Algebra R S]
   [Algebra S ℂ] [IsScalarTower R S ℂ] [FaithfulSMul S ℂ]
 
 
+/-- The expansion in `S` is independent of which compatible source ring certifies the coefficient
+condition. -/
 theorem fourier_ring_change (T : Type) [CommRing T] [Algebra T ℂ] [Algebra T S]
   [IsScalarTower T S ℂ] [ModularFormOverClass F T Γ k] (f : F) :
     fourier R f S = fourier T f S := rfl
@@ -60,21 +76,26 @@ theorem fourier_ring_change (T : Type) [CommRing T] [Algebra T ℂ] [Algebra T S
 
 theorem fourier_def (f : F) : fourier R f S = (isOver_tower R S f).fourier := rfl
 
+/-- Mapping the coefficients of `fourier` to `ℂ` recovers the complex Fourier expansion. -/
 theorem map_fourier (f : F) : map (algebraMap S ℂ) (fourier R f S) = qExp f :=
   isOver.map_fourier (isOver_tower R S f)
 
 @[simp] theorem fourierℂ (f : F) : fourier R f ℂ = qExp f := by
   rw [← map_fourier R ℂ]; rfl
 
+/-- Equality of Fourier expansions over a faithful coefficient ring implies equality of modular
+forms. -/
 theorem fourier_inj [Γ.IsArithmetic] {f g : F}
     (h : fourier R f S = fourier R g S) : f = g :=
   qExp_inj <| by simp only [← map_fourier R S, h]
 
+/-- Identify an expansion over `S` by checking its image in the complex power-series ring. -/
 theorem fourier_eq_iff (f : F) (g : S⟦X⟧) :
     fourier R f S = g ↔ qExp f = map (algebraMap S ℂ) g :=
   ⟨fun h => by rw [← h, map_fourier],
     fun h => map_algebraMap_injective ℂ <| by rw [← h, map_fourier] ⟩
 
+/-- Fourier expansion commutes with extension from an intermediate coefficient ring `T` to `S`. -/
 theorem fourier_ring_cast (T : Type) [CommRing T] [Algebra R T] [Algebra T S]
   [Algebra T ℂ] [IsScalarTower R T ℂ] [FaithfulSMul T ℂ] [IsScalarTower T S ℂ] (f : F) :
     fourier R f S = map (algebraMap T S) (fourier R f T) := by
@@ -134,6 +155,7 @@ omit hF
     ← qExp_def, qExp_intCast, map_intCast]
 
 
+/-- The Fourier expansion of a product is the product of the expansions. -/
 @[simp] theorem fourier_mul [Γ.IsArithmetic] {k j}
   (f : ModularFormOver R Γ k) (g : ModularFormOver R Γ j) :
     fourier R (f.mul g) S = fourier R f S * fourier R g S := by
@@ -141,11 +163,13 @@ omit hF
   simp only [qExp_mul, map_mul, map_fourier]; rfl
 
 
+/-- The Fourier expansion of a natural power is the corresponding power of the expansion. -/
 @[simp] theorem fourier_pow [Γ.IsArithmetic] (f : ModularFormOver R Γ k) (m : ℕ) :
     fourier R (f.pow m) S = fourier R f S ^ m := by
   rw [fourier_eq_iff, show qExp (f.pow m) = qExp (f.1.pow m) by rfl]
   simp only [qExp_pow, map_pow, map_fourier]; rfl
 
+/-- Fourier expansion as an `R`-linear map on forms of a fixed weight. -/
 @[simps]
 noncomputable def fourierLinearMap {R} [CommRing R] [Algebra R ℂ] [FaithfulSMul R ℂ]
     [Γ.IsArithmetic] [Γ.HasDetOne] : ModularFormOver R Γ k →ₗ[R] R⟦X⟧ where
@@ -155,6 +179,7 @@ noncomputable def fourierLinearMap {R} [CommRing R] [Algebra R ℂ] [FaithfulSMu
 
 include hF
 
+/-- The `n`-th Fourier coefficient, taken in the compatible coefficient ring `S`. -/
 noncomputable def coeff (n : ℕ) (f : F) (S : Type := R) [CommRing S] [Algebra R S]
     [Algebra S ℂ] [IsScalarTower R S ℂ] [FaithfulSMul S ℂ] : S :=
   PowerSeries.coeff n (fourier R f S)
@@ -163,30 +188,36 @@ noncomputable def coeff (n : ℕ) (f : F) (S : Type := R) [CommRing S] [Algebra 
 theorem coeff_def (n : ℕ) (f : F) :
   coeff R n f S = (fourier R f S).coeff n := rfl
 
+/-- Forms of a fixed weight are determined by all of their Fourier coefficients. -/
 theorem coeff_inj [Γ.IsArithmetic] {f g : F}
     (h : ∀ n, coeff R n f S = coeff R n g S) : f = g :=
   fourier_inj _ _ <| PowerSeries.ext h
 
+/-- A coefficient over `S` maps to the corresponding complex Fourier coefficient. -/
 @[simp] theorem map_coeff_eq_qExp (n : ℕ) (f : F) :
     algebraMap S ℂ (coeff R n f S) = (qExp f).coeff n := by
   rw [coeff, ← coeff_map, map_fourier]
 
+/-- Identify a coefficient in `S` by comparing its image with the complex Fourier coefficient. -/
 theorem coeff_eq_iff (n : ℕ) (f : F) (s : S) :
     coeff R n f S = s ↔ (qExp f).coeff n = algebraMap S ℂ s :=
   ⟨fun h => by rw [← h, coeff, ← coeff_map, map_fourier],
     fun h => FaithfulSMul.algebraMap_injective S ℂ <| by
       rw [← h, coeff, ← coeff_map, map_fourier]⟩
 
+/-- The coefficient in `S` is independent of the compatible source ring used to define it. -/
 theorem coeff_ring_change (T : Type) [CommRing T] [Algebra T ℂ] [Algebra T S]
   [IsScalarTower T S ℂ] [ModularFormOverClass F T Γ k] (f : F) (n : ℕ) :
     coeff R n f S = coeff T n f S := rfl
 
+/-- Fourier coefficients commute with extension from an intermediate ring `T` to `S`. -/
 theorem coeff_ring_cast (T : Type) [CommRing T] [Algebra R T] [Algebra T S]
   [Algebra T ℂ] [IsScalarTower R T ℂ] [FaithfulSMul T ℂ] [IsScalarTower T S ℂ] (f : F) (n : ℕ) :
     coeff R n f S = (algebraMap T S) (coeff R n f T) := by
   simp only [coeff_def, fourier_ring_cast R S T, coeff_map]
 
 omit hF in
+/-- Two forms over `R` are equal if all their Fourier coefficients agree. -/
 @[ext]
 protected theorem ext [Γ.IsArithmetic] {R : Type} [CommRing R]
   [Algebra R ℂ] [FaithfulSMul R ℂ] {f g : ModularFormOver R Γ k}
@@ -233,15 +264,18 @@ omit hF
     coeff R n (m : ModularFormOver R Γ 0) S = if n = 0 then (m : S) else 0 := by
   rw [coeff_def, fourier_intCast, show (m : S⟦X⟧) = C (m : S) by rw [map_intCast], coeff_C]
 
+/-- The coefficient of a product is the convolution of the two coefficient sequences. -/
 theorem coeff_mul {k j} [Γ.IsArithmetic] (f : ModularFormOver R Γ k) (g : ModularFormOver R Γ j) :
     coeff R n (f.mul g) S = ∑ x ∈ Finset.antidiagonal n, coeff R x.1 f S * coeff R x.2 g S := by
   simp only [coeff, fourier_mul, PowerSeries.coeff_mul]
 
+/-- The coefficient of a natural power is a sum over exponent distributions of total degree `n`. -/
 theorem coeff_pow [Γ.IsArithmetic] (f : ModularFormOver R Γ k) (m : ℕ) :
   coeff R n (f.pow m) S = ∑ l ∈ (Finset.range m).finsuppAntidiag n,
     ∏ i ∈ Finset.range m, coeff R (l i) f S := by
   simp only [coeff, fourier_pow, PowerSeries.coeff_pow]
 
+/-- Extraction of the `n`-th Fourier coefficient as an `R`-linear map. -/
 @[simps]
 noncomputable def coeffLinearMap {R} [CommRing R] [Algebra R ℂ] [FaithfulSMul R ℂ]
     [Γ.IsArithmetic] [Γ.HasDetOne] (n : ℕ) : ModularFormOver R Γ k →ₗ[R] R where
@@ -252,10 +286,12 @@ noncomputable def coeffLinearMap {R} [CommRing R] [Algebra R ℂ] [FaithfulSMul 
 
 section isOverℂ
 
+/-- Every complex modular form has its Fourier expansion over `ℂ`. -/
 theorem isOverℂ {F : Type*} [FunLike F ℍ ℂ]
     [ModularFormClass F Γ k] (f : F) : isOver ℂ f :=
   ⟨qExp f, rfl⟩
 
+/-- Bundle any element of a modular-form class as a form over `ℂ`. -/
 def _root_.ModularFormClass.modularFormOverℂ {F : Type*} [FunLike F ℍ ℂ]
     [ModularFormClass F Γ k] (f : F) : ModularFormOver ℂ Γ k :=
   {ModularFormClass.modularForm f with isOver' := isOverℂ f}

@@ -11,9 +11,13 @@ import Mathlib.Algebra.Algebra.Rat
 import Mathlib.Algebra.CharP.Algebra
 
 /-!
-# P Integers
-A p integer is a rational number whose denominator is prime to p.
-Implemented as the localization of ℤ at the ideal pℤ
+# Localizations of the integers and reduction modulo a prime
+
+`PInteger p`, written `ℤ(p)`, is the localization of `ℤ` at the prime ideal `pℤ`.
+It represents rational numbers whose denominators are prime to `p`. This file
+constructs embeddings into characteristic-zero fields, reduction to `ZMod p`,
+and fraction constructors. It also provides the notation `ℤ[1/z]`, its canonical
+maps, and invertibility instances used for modular forms over coefficient rings.
 -/
 
 
@@ -23,6 +27,7 @@ variable (p : ℕ) [Fact p.Prime]
 noncomputable section
 
 
+/-- For prime `p`, the principal ideal `pℤ` is prime. -/
 instance primeIdeal_isPrime : (Ideal.span {(p : ℤ)}).IsPrime :=
   Ideal.isPrime_span_singleton_of_prime <|
     Nat.prime_iff_prime_int.mp Fact.out
@@ -57,6 +62,7 @@ noncomputable def toComplex : ℤ(p) →+* ℂ :=
 
 /-! The natural maps out of the localization. -/
 
+/-- The canonical embedding of the local integers `ℤ(p)` into `ℚ`. -/
 noncomputable def toRat : ℤ(p) →+* ℚ :=
   IsLocalization.map (M := (Ideal.span {(p : ℤ)}).primeCompl)
     (T := nonZeroDivisors ℚ) (S := Localization.AtPrime (Ideal.span {(p : ℤ)}))
@@ -85,6 +91,7 @@ theorem toRat_injective : Function.Injective (toRat (p := p)) := by
     (hN := by simp)
     (hf' := Int.cast_injective)
 
+/-- The canonical map from the local integers to `ℂ` is injective. -/
 theorem toComplex_injective : Function.Injective (toComplex (p := p)) := by
   intro x y h
   apply toRat_injective
@@ -131,6 +138,7 @@ instance (R) [Field R] [CharZero R] : FaithfulSMul ℤ(p) R :=
 
 /-! Reduction modulo `p`; denominators in the localization are units modulo `p`. -/
 
+/-- Reduce a local integer modulo `p` by inverting its denominator in `ZMod p`. -/
 noncomputable def reduce : ℤ(p) →+* ZMod p :=
   IsLocalization.lift (M := (Ideal.span {(p : ℤ)}).primeCompl)
     (g := Int.castRingHom (ZMod p)) (fun s => by
@@ -163,6 +171,7 @@ theorem reduce_add (x y : ℤ(p)) :
 theorem reduce_mul (x y : ℤ(p)) :
     reduce (x * y) = reduce x * reduce y := map_mul _ _ _
 
+/-- Every residue class modulo `p` is the reduction of a local integer. -/
 theorem reduce_surjective : Function.Surjective (reduce (p := p)) := by
   intro x
   obtain ⟨z, rfl⟩ := ZMod.intCast_surjective x
@@ -173,6 +182,7 @@ def mk (a b : ℤ) (hb : ¬ ↑p ∣ b) : PInteger p :=
   IsLocalization.mk' (M := (Ideal.span {(p : ℤ)}).primeCompl)
     _ a ⟨b, fun h => hb <| Ideal.mem_span_singleton.mp h⟩
 
+/-- Construct a local integer from a rational number with nonnegative p-adic valuation. -/
 def mk' (q : ℚ) (hq : padicValRat p q ≥ 0) : PInteger p :=
   mk q.num (q.den : ℤ) (by
     intro hden
@@ -195,6 +205,7 @@ def mk' (q : ℚ) (hq : padicValRat p q ≥ 0) : PInteger p :=
 open Rat
 
 
+/-- The fraction constructor `mk a b hb` maps to the rational fraction `a /. b`. -/
 theorem toRat_mk (a b : ℤ) (hb : ¬ ↑p ∣ b) : toRat (mk a b hb) = a /. b := by
   let hmap : (Ideal.span {(p : ℤ)}).primeCompl ≤
       (nonZeroDivisors ℚ).comap (Int.castRingHom ℚ) := by
@@ -216,11 +227,14 @@ theorem toRat_mk (a b : ℤ) (hb : ¬ ↑p ∣ b) : toRat (mk a b hb) = a /. b :
   rw [Rat.divInt_eq_div]
   simp
 
+/-- The rational image of `mk' q hq` is the original number `q`. -/
 theorem toRat_mk' (q : ℚ) (hq : padicValRat p q ≥ 0) : toRat (mk' q hq) = q := by
   rw [mk']
   rw [toRat_mk (p := p)]
   exact Rat.num_divInt_den q
 
+/-- The image of a local fraction in a characteristic-zero division ring is the corresponding
+fraction. -/
 @[simp] theorem algebraMap_mk (a b : ℤ) (hb : ¬ ↑p ∣ b)
   {R} [DivisionRing R] [CharZero R] :
     algebraMap ℤ(p) R (mk a b hb) = a /. b := by
@@ -228,6 +242,7 @@ theorem toRat_mk' (q : ℚ) (hq : padicValRat p q ≥ 0) : toRat (mk' q hq) = q 
   rw [toRat_mk]
   simp
 
+/-- The image of `mk' q hq` in a characteristic-zero division ring is the cast of `q`. -/
 @[simp] theorem algebraMap_mk' (q : ℚ) (hq : padicValRat p q ≥ 0)
   {R} [DivisionRing R] [CharZero R] :
     algebraMap ℤ(p) R (mk' q hq) = q := by
@@ -249,10 +264,12 @@ scoped[PInteger] notation "ℤ[1/" z:max "]" => LocalℤAway z
 
 variable (R) [CommRing R] {z : ℤ} [Invertible (z : R)]
 
+/-- The canonical map `ℤ[1/z] →+* R` when the image of `z` is invertible in `R`. -/
 noncomputable def IsLocalization.Away.Intlift : ℤ[1/z] →+* R :=
   IsLocalization.Away.lift z (g := Int.castRingHom R)
     (by rw [eq_intCast]; exact isUnit_of_invertible (z : R))
 
+/-- The canonical map out of `ℤ[1/z]` is injective in characteristic zero. -/
 theorem IsLocalization.Away.Intlift_injective [CharZero R] :
     Function.Injective (IsLocalization.Away.Intlift (R := R) (z := z)) := by
   have hzR : (z : R) ≠ 0 := (isUnit_of_invertible (z : R)).ne_zero
@@ -335,8 +352,10 @@ instance (R) [CommRing R] [Invertible (6 : R)] : Invertible (1728 : R) := by
     _ = (6 * ⅟ (6 : R)) ^ 6 := (mul_pow _ _ _).symm
     _ = 1 := by rw [mul_invOf_self, one_pow]
 
+/-- A prime at least five, packaged for typeclass inference. -/
 class isLargePrime (ℓ : ℕ) where [Prime : ℓ.Prime] [AtLeastFive : ℓ ≥ 5]
 
+/-- A prime at least thirteen, packaged for typeclass inference. -/
 class isLargerPrime (ℓ : ℕ) where [Prime : ℓ.Prime] [AtLeastThirteen : ℓ ≥ 13]
 
 instance (ℓ) [h : isLargePrime ℓ] : Fact (ℓ.Prime) := ⟨h.Prime⟩

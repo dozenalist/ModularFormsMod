@@ -1,6 +1,14 @@
 import Mathlib.NumberTheory.ModularForms.Discriminant
 import ModularFormsMod.discProduct
 
+/-!
+# The Fourier expansion of the modular discriminant
+
+The Fourier coefficients of the discriminant are the stable integer coefficients
+of `discProduct`. The proof relates coefficientwise stabilization of finite formal
+products to locally uniform convergence of their analytic evaluations.
+-/
+
 
 
 open ModularForm PowerSeries MatrixGroups UpperHalfPlane Set DirectSum Filter Function
@@ -11,15 +19,14 @@ namespace ModularForm
 noncomputable section
 
 /-!
-  Independent proof draft for `Delta.carrier_eq`.
-
-  The coefficientwise part is complete: the finite products converge in the
-  coefficientwise topology to the power series whose coefficients are the
-  coefficients of `Delta`.  The remaining step is to connect this formal
-  power-series identity to analytic evaluation at `𝕢 1 τ`.
+  The proof first identifies the coefficientwise limit of the finite products,
+  then uses locally uniform convergence of their derivatives to identify the
+  resulting coefficients with those of the analytic discriminant.
 -/
 
 
+/-- The discriminant has integral Fourier coefficients given in degree `m` by the degree-`m`
+coefficient of `discProduct m`. -/
 theorem qExpansion_discriminant : qExpansion 1 (CuspForm.discriminant : ModularForm 𝒮ℒ 12) =
     PowerSeries.map (algebraMap ℤ ℂ) (.mk fun m => (discProduct m).coeff m) := by
 

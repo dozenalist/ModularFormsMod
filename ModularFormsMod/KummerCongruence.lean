@@ -4,14 +4,14 @@ import Mathlib.Data.Nat.Squarefree
 /-!
 # Kummer's congruence for Bernoulli numbers
 
-This file records part (2) of Theorem 1.35.  For a prime `p`, the residue of a
-`p`-integral rational number is represented in `ZMod p` by reducing its
-numerator and multiplying by the inverse of its denominator.
+This file proves denominator properties of Bernoulli numbers, a Faulhaber
+congruence modulo `p²`, Voronoi's congruence, and the weak form of Kummer's
+congruence modulo `p`. These imply the nonnegative valuation of the Eisenstein
+coefficient factor at weight `p + 1`.
 
-The substantive theorem below is Kummer's congruence.  Its proof is the
-remaining number-theoretic ingredient needed here; the surrounding API makes
-the intended statement precise and exposes the two auxiliary assertions
-(`p`-integrality and equality of residues) separately.
+The namespace `ThetaOperator.KummerCongruence` also provides predicates for
+`p`-integrality, residues in `ZMod p`, and wrappers for the Faulhaber and
+von Staudt–Clausen identities.
 -/
 
 
@@ -64,6 +64,8 @@ private lemma pIntegral_iff_not_dvd_den {p : ℕ} [Fact p.Prime] {x : ℚ} :
     pIntegral p x ↔ ¬ p ∣ x.den :=
   Rat.padicValuation_le_one_iff
 
+/-- Every natural number has p-adic valuation at most one in the multiplicative valuation
+convention. -/
 @[simp]
 lemma Rat.padicValuation_natCast (p : ℕ) [Fact p.Prime] (x : ℕ) :
     Rat.padicValuation p x = Int.padicValuation p x :=
@@ -281,6 +283,8 @@ private lemma pIntegral_bernoulli_add_indicator {p : ℕ} [Fact p.Prime] :
     rw [hT]
     exact sub_mem (intCast_mem _ T) (pIntegral_faulhaber_sum ih)
 
+/-- Adding the local von Staudt correction to a positive even Bernoulli number removes `p` from
+its denominator. -/
 lemma not_dvd_den_bernoulli_add_ite {p k : ℕ} (hp : p.Prime)
     (hk₀ : k ≠ 0) (hk : Even k) : ¬ p ∣ (bernoulli k + (if p - 1 ∣ k then 1 else 0) / p).den := by
   have : Fact p.Prime := ⟨hp⟩
@@ -340,12 +344,14 @@ private theorem pIntegral_mul_bernoulli {p k : ℕ} [Fact p.Prime] :
     simp [vonStaudtIndicator, apply_ite]
   · simp [bernoulli_eq_zero_of_odd ho hk₁]
 
+/-- The rational number `p * bernoulli k` has denominator prime to `p`. -/
 theorem not_dvd_mul_bernoulli {p k : ℕ} (hp : p.Prime) :
     ¬ p ∣ (p * bernoulli k).den := by
   have : Fact p.Prime := ⟨hp⟩
   rw [← pIntegral_iff_not_dvd_den]
   exact pIntegral_mul_bernoulli
 
+/-- The denominator of every Bernoulli number is squarefree. -/
 theorem squarefree_den_bernoulli {k : ℕ} :
     Squarefree (bernoulli k).den := by
   rw [Nat.squarefree_iff_prime_squarefree]
@@ -526,6 +532,7 @@ theorem faulhaber_mod_sq {p : ℕ} [Fact p.Prime] {k : ℕ} (hk : Even k) (hk2 :
     rw [hsplit, pow_add]
     ring
 
+/-- The binomial remainder after the constant and linear terms is divisible by `y²`. -/
 lemma sq_dvd_add_pow_sub_pow_sub {R} [CommRing R] (x y : R) :
     ∀ n : ℕ, y ^ 2 ∣ (x + y) ^ n - x ^ n - n * x ^ (n - 1) * y
   | 0 => ⟨0, by simp⟩
@@ -805,6 +812,8 @@ end
 
 end ImportedKummer
 
+/-- The Eisenstein coefficient factor `2 * (p + 1) / bernoulli (p + 1)` has nonnegative p-adic
+valuation. -/
 theorem padicVal_bernoulli_add_one (p) [Fact p.Prime] :
     padicValRat p (2 * (p + 1) / bernoulli (p + 1)) ≥ 0 := by
   have hp : p.Prime := Fact.out
@@ -864,30 +873,33 @@ namespace ThetaOperator.KummerCongruence
 
 noncomputable section
 
-/- A rational number is `p`-integral when its denominator is prime to `p`. -/
+/-- A rational number is p-integral when its multiplicative p-adic valuation is at most one. -/
 def PIntegral (p : ℕ) (x : ℚ) [Fact p.Prime] : Prop :=
   Rat.padicValuation p x ≤ 1
 
-/- The residue of a rational number in `ZMod p`. -/
+/-- Reduce a rational numerator modulo `p` and multiply by the inverse of the reduced denominator.
+For p-integral inputs this is reduction to the residue field. -/
 def residue (p : ℕ) (x : ℚ) : ZMod p :=
   (x.num : ZMod p) * (x.den : ZMod p)⁻¹
 
+/-- A rational number is p-integral precisely when its denominator is prime to `p`. -/
 theorem pIntegral_iff {p : ℕ} [Fact p.Prime] (x : ℚ) :
     PIntegral p x ↔ ¬p ∣ x.den := by
   exact Rat.padicValuation_le_one_iff
 
+/-- The residue is the reduced numerator multiplied by the inverse of the reduced denominator. -/
 theorem residue_eq_inv (p : ℕ) (x : ℚ) :
     residue p x = (x.num : ZMod p) * (x.den : ZMod p)⁻¹ := by
   rfl
 
-/- The normalized Bernoulli value occurring in Kummer's congruence. -/
+/-- The normalized Bernoulli value `bernoulli n / n` appearing in Kummer's congruence. -/
 def normalizedBernoulli (n : ℕ) : ℚ := bernoulli n / n
 
-/- The power sum used in the Faulhaber argument. -/
+/-- The rational power sum of degree `n` over the integers from zero to `N - 1`. -/
 def powerSum (N n : ℕ) : ℚ :=
   ∑ a ∈ Finset.range N, (a : ℚ) ^ n
 
-/- The von Staudt correction attached to an even Bernoulli index. -/
+/-- The sum of `1 / q` over primes with `q - 1 ∣ n`, using the bound `q < n + 2`. -/
 def vonStaudtCorrection (n : ℕ) : ℚ :=
   ∑ q ∈ Finset.range (n + 2) with q.Prime ∧ (q - 1) ∣ n, (1 : ℚ) / q
 
@@ -899,12 +911,14 @@ von Staudt--Clausen theorems.  Keeping them in this file makes the later
 `p`-local argument independent of the exact shape of the upstream API.
 -/
 
+/-- Faulhaber's formula expresses a finite power sum in terms of Bernoulli numbers. -/
 theorem powerSum_eq_faulhaber (N n : ℕ) :
     powerSum N n =
       ∑ i ∈ Finset.range (n + 1),
         bernoulli i * ((n + 1).choose i) * (N : ℚ) ^ (n + 1 - i) / (n + 1) := by
   simpa [powerSum] using (sum_range_pow N n)
 
+/-- Adding the von Staudt correction to an even-index Bernoulli number gives an integer. -/
 theorem bernoulli_add_vonStaudtCorrection_is_integer (n : ℕ) :
     bernoulli (2 * n) + vonStaudtCorrection (2 * n) ∈ Set.range Int.cast := by
   simpa [vonStaudtCorrection] using (Bernoulli.vonStaudt_clausen n)

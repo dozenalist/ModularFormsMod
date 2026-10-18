@@ -1,5 +1,13 @@
 import ModularFormsMod.EventuallyEq
 
+/-!
+# Finite products for the modular discriminant
+
+`discProduct m` is the finite product `X * ∏ i < m, (1 - X^(i + 1))^24`.
+Its coefficients commute with ring homomorphisms and stabilize as `m` grows.
+The final theorem expresses this stabilization using `PowerSeries.eventuallyEq`.
+-/
+
 set_option linter.style.header false
 
 
@@ -12,7 +20,8 @@ open Finset PowerSeries
 
 variable {α : Type*} [CommRing α]
 
-/-- The power series generating function for `Δ`. Can be instantiated over any commutative ring -/
+/-- The finite product `X * ∏ i < m, (1 - X^(i + 1))^24` approximating the Fourier
+expansion of `Δ`, defined over any commutative ring. -/
 def discProduct (m : ℕ) : α ⟦X⟧ :=
   X * ∏ i ∈ range m, (1 - X ^ (i + 1)) ^ 24
 
@@ -21,16 +30,21 @@ lemma discProduct_apply (m : ℕ) :
   discProduct m = (X : α⟦X⟧) * ∏ i ∈ range m, (1 - X ^ (i + 1)) ^ 24 := rfl
 
 
+/-- Finite discriminant products commute with coefficientwise ring homomorphisms. -/
 @[simp] lemma map_discProduct {R S : Type*} [CommRing R] [CommRing S] (g : R →+* S) (n : ℕ) :
     map g (discProduct (α := R) n) = discProduct (α := S) n := by
   simp only [discProduct, map_mul, map_X, map_prod, map_pow, map_sub, map_one]
 
+/-- A ring homomorphism sends each finite discriminant-product coefficient to the corresponding
+coefficient over the target. -/
 @[simp] lemma map_coeff_discProduct {R S : Type*} [CommRing R] [CommRing S] (g : R →+* S) (k j : ℕ) :
     g ((coeff (R := R) k) (discProduct j)) = (coeff (R := S) k) (discProduct j) := by
   trans (coeff (R := S) k) (map g (discProduct j))
   · rfl
   · rw [map_discProduct]
 
+/-- The coefficients of a finite discriminant product over any commutative ring are casts of its
+integer coefficients. -/
 @[simp, norm_cast] lemma Int.cast_coeff_discProduct {S : Type*} [CommRing S] (k j : ℕ) :
     ((↑) : ℤ → S) ((coeff k) (discProduct j)) = (coeff (R := S) k) (discProduct j) := by
   trans (Int.castRingHom S) ((coeff k) (discProduct j))
@@ -45,6 +59,7 @@ open Nat PowerSeries Finset
 
 variable {α : Type*}
 
+/-- Increasing the product cutoff beyond degree `n` leaves its degree-`n` coefficient unchanged. -/
 lemma discProduct_coeff_le' [CommRing α] {n m j : ℕ} (nlm : n ≤ m) (mlj : m ≤ j) :
     coeff (R := α) n (discProduct m) = coeff (R := α) n (discProduct j) := by
 
@@ -149,17 +164,23 @@ lemma discProduct_coeff_le' [CommRing α] {n m j : ℕ} (nlm : n ≤ m) (mlj : m
         _ = _ := by simp only [sum_singleton]
 
 
+/-- The coefficient of degree `n` is independent of the cutoff once both cutoffs are at least
+`n`. -/
 theorem discProduct_coeff_le [CommRing α] {n m j : ℕ} (nlm : n ≤ m) (nlj : n ≤ j) :
     coeff (R := α) n (discProduct m) = coeff (R := α) n (discProduct j) :=
   (m.le_total j).casesOn
     (discProduct_coeff_le' nlm · )
     (.symm <| discProduct_coeff_le' nlj ·)
 
+/-- A truncated power series with prescribed coefficients has coefficient `a n` below the
+truncation bound. -/
 lemma coeff_sum_X_pow [Semiring α] {n N : ℕ} {a : ℕ → α} (h : n < N) :
     coeff n (∑ i ∈ range N, C (a i) * (X : α⟦X⟧) ^ i ) = a n := by
   simpa using (not_lt_of_ge · h |>.elim)
 
 
+/-- The finite discriminant products eventually agree coefficientwise with the partial sums of
+their stabilized coefficients. -/
 theorem discProduct_eventually_sum [CommRing α] :
     (discProduct ·) ⟶ (∑ i ∈ range ·, (discProduct (α := α) i).coeff i • (X : α⟦X⟧) ^ i) := by
   intro n

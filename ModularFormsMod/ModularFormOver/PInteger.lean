@@ -4,12 +4,24 @@ import ModularFormsMod.ModularForm
 import ModularFormsMod.LdvdBernoulliNum
 import ModularFormsMod.KummerCongruence
 
+/-!
+# Eisenstein series over the local integers
+
+The Eisenstein series of weights `p - 1` and `p + 1` have coefficients in
+`ℤ(p)`. Their Fourier coefficient formulas follow from valuation estimates
+for the corresponding Bernoulli factors. This file also supplies scalar
+extension from `ℤ[1/6]` and expresses `Δ` in terms of `E₄` and `E₆` when
+`6` is invertible.
+-/
+
 
 open PInteger UpperHalfPlane ModularForm ModularFormOver
   MatrixGroups ArithmeticFunction.sigma
 
 variable {F} [FunLike F ℍ ℂ] {Γ k}
 
+/-- Extend forms over `ℤ[1/6]` to a compatible characteristic-zero ring in which `6` is
+invertible. -/
 instance ModularFormOverClass.towerℤAway6
   [hF : ModularFormOverClass F ℤ[1/6] Γ k]
     (R : Type) [CommRing R] [Algebra R ℂ]
@@ -26,6 +38,8 @@ variable {F : Type*} [FunLike F ℍ ℂ] {f : F} {Γ : Subgroup (GL (Fin 2) ℝ)
 
 namespace ModularFormOver
 
+/-- The Eisenstein series of weight `p - 1`, with Fourier coefficients in the local integers
+`ℤ(p)`. -/
 noncomputable def Esubone (p : ℕ) [Fact p.Prime] :
     ModularFormOver ℤ(p) 𝒮ℒ (p - 1) where
   toModularForm := Eis (p - 1)
@@ -42,6 +56,8 @@ noncomputable def Esubone (p : ℕ) [Fact p.Prime] :
     · exact zero_mem _
     · exact zero_mem _
 
+/-- The Eisenstein series of weight `p + 1`, with Fourier coefficients in the local integers
+`ℤ(p)`. -/
 noncomputable def Eaddone (p : ℕ) [Fact p.Prime] :
     ModularFormOver ℤ(p) 𝒮ℒ (p + 1) where
   toModularForm := Eis (p + 1)
@@ -59,6 +75,8 @@ noncomputable def Eaddone (p : ℕ) [Fact p.Prime] :
     · exact zero_mem _
 
 
+/-- For primes `p ≥ 5`, the complex coefficients of `Esubone p` have the usual Bernoulli and
+divisor-sum formula. -/
 theorem qExp_Esubone (p : ℕ) [Fact p.Prime] (hp : p ≥ 5) (n : ℕ) :
   (qExp (Esubone p)).coeff n = if n = 0 then 1 else
     -((2 : ℂ) * (p - 1) / (bernoulli (p - 1))) * σ (p - 2) n := by
@@ -74,6 +92,8 @@ theorem qExp_Esubone (p : ℕ) [Fact p.Prime] (hp : p ≥ 5) (n : ℕ) :
     have hpo : Odd p :=  Nat.Prime.odd_of_ne_two hpp hp2
     grind
 
+/-- For primes `p ≥ 3`, the complex coefficients of `Eaddone p` have the usual Bernoulli and
+divisor-sum formula. -/
 theorem qExp_Eaddone (p : ℕ) [Fact p.Prime] (hp : p ≥ 3) (n : ℕ) :
   (qExp (Eaddone p)).coeff n = if n = 0 then 1 else
     -((2 : ℂ) * (p + 1) / (bernoulli (p + 1))) * σ p n := by
@@ -88,6 +108,8 @@ theorem qExp_Eaddone (p : ℕ) [Fact p.Prime] (hp : p ≥ 3) (n : ℕ) :
     grind
 
 
+/-- The Fourier coefficient formula for `Esubone p` in `ℤ(p)`, using the p-integral Bernoulli
+factor. -/
 theorem coeff_Esubone (p : ℕ) [Fact p.Prime] (hp : p ≥ 5) (n : ℕ) :
   coeff ℤ(p) n (Esubone p) = if n = 0 then 1 else
     -mk' (2 * (p - 1) / bernoulli (p - 1)) (padicVal_bernoulli_sub_one p)
@@ -97,6 +119,8 @@ theorem coeff_Esubone (p : ℕ) [Fact p.Prime] (hp : p ≥ 5) (n : ℕ) :
   · exact map_one _ |>.symm
   · simp
 
+/-- The Fourier coefficient formula for `Eaddone p` in `ℤ(p)`, using the p-integral Bernoulli
+factor. -/
 theorem coeff_Eaddone (p : ℕ) [Fact p.Prime] (hp : p ≥ 3) (n : ℕ) :
   coeff ℤ(p) n (Eaddone p) = if n = 0 then 1 else
     -mk' (2 * (p + 1) / bernoulli (p + 1)) (padicVal_bernoulli_add_one p)
@@ -107,6 +131,7 @@ theorem coeff_Eaddone (p : ℕ) [Fact p.Prime] (hp : p ≥ 3) (n : ℕ) :
   · simp
 
 
+/-- The coefficients of `Esubone p` after extension to a compatible characteristic-zero field. -/
 theorem coeff_cast_Esubone (R : Type) [Field R] [CharZero R] [Algebra R ℂ]
   (p : ℕ) [Fact p.Prime] (hp : p ≥ 5) (n : ℕ) :
     coeff ℤ(p) n (Esubone p) R  = if n = 0 then (1 : R) else
@@ -116,6 +141,7 @@ theorem coeff_cast_Esubone (R : Type) [Field R] [CharZero R] [Algebra R ℂ]
   · exact map_one _
   · simp
 
+/-- The coefficients of `Eaddone p` after extension to a compatible characteristic-zero field. -/
 theorem coeff_cast_Eaddone (R : Type) [Field R] [CharZero R] [Algebra R ℂ]
   (p : ℕ) [Fact p.Prime] (hp : p ≥ 3) (n : ℕ) :
     coeff ℤ(p) n (Eaddone p) R  = if n = 0 then (1 : R) else
@@ -126,6 +152,7 @@ theorem coeff_cast_Eaddone (R : Type) [Field R] [CharZero R] [Algebra R ℂ]
   · simp
 
 
+/-- When `6` is invertible, `Δ` is `(E₄³ - E₆²) / 1728` over the coefficient ring. -/
 theorem discriminant_eq_E₄E₆ {R} [CommRing R] [Algebra R ℂ] [Invertible (6 : R)] :
     (Δ).tower R = ⅟ (1728 : R) •
       (((E₄.tower R).pow 3).cast (by rfl) -
