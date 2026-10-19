@@ -17,7 +17,7 @@ there exists a Ramanujan congruence for a prime p if and only if p = 5, 7, 11.
 
 open ModularFormMod.ZMod RamanujanCongruence.KOl ModularFormMod
 
-
+/- There are no Ramanujan congruences for primes ≥ 13 -/
 theorem not_RamanujanCongruence (p : ℕ) [isLargerPrime p] :
     ¬ RamanujanCongruence p := by
   rw [RamanujanCongruence_iff_delta]
@@ -50,14 +50,14 @@ theorem RamanujanCongruence_7 : RamanujanCongruence 7 := by
   norm_num [Filtration_fl, delta] at hhigh
   omega
 
+/-- Ramanujan's partition congruence modulo eleven. -/
 theorem RamanujanCongruence_11 : RamanujanCongruence 11 := by
   rw [RamanujanCongruence_iff_delta, ← flu_eq_zero_iff]
   by_contra h
   have hlow := twelve_le_Filtration_UOp_fl h
   have hhigh := Filtration_UOp_le (fl 11)
   have hcong := Filtration_congr (fl 11).UOp h
-  norm_num [Filtration_fl, delta] at hhigh
-  norm_num [Int.ModEq, delta] at hcong
+  norm_num [Filtration_fl, delta, Int.ModEq] at *
   omega
 
 
@@ -66,22 +66,27 @@ section verbose
 theorem not_RamanujanCongruence_verbose (p : ℕ) (hp : p.Prime) (hp13 : 13 ≤ p) :
     ∀ β : ℤ, ∃ n : ℤ, ¬ partition (p * n - β) ≡ 0 [MOD p] := by
   have : isLargerPrime p := {Prime := hp, AtLeastThirteen := hp13}
-  simp only [← not_forall, ← not_exists]
-  exact not_RamanujanCongruence p
+  simpa only [← not_forall, ← not_exists] using! not_RamanujanCongruence p
 
 theorem RamanujanCongruence_5_verbose (n : ℤ) :
     partition (5 * n + 4) ≡ 0 [MOD 5] := by
   rw [show 5 * n + 4 = 5 * (n + 1) - 1 by ring]
-  exact (RamanujanCongruence_iff_delta.mp RamanujanCongruence_5) (n + 1)
+  exact RamanujanCongruence_iff_delta.mp RamanujanCongruence_5 <| n + 1
 
-theorem ramanujan_congruence_7_verbose (n : ℤ) :
+theorem RamanujanCongruence_7_verbose (n : ℤ) :
     partition (7 * n + 5) ≡ 0 [MOD 7] := by
   rw [show 7 * n + 5 = 7 * (n + 1) - 2 by ring]
-  exact (RamanujanCongruence_iff_delta.mp RamanujanCongruence_7) (n + 1)
+  exact RamanujanCongruence_iff_delta.mp RamanujanCongruence_7 <| n + 1
 
-theorem ramanujan_congruence_11_verbose (n : ℤ) :
+theorem RamanujanCongruence_11_verbose (n : ℤ) :
     partition (11 * n + 6) ≡ 0 [MOD 11] := by
   rw [show 11 * n + 6 = 11 * (n + 1) - 5 by ring]
-  exact (RamanujanCongruence_iff_delta.mp RamanujanCongruence_11) (n + 1)
+  exact RamanujanCongruence_iff_delta.mp RamanujanCongruence_11 <| n + 1
+
+
+#print axioms not_RamanujanCongruence_verbose
+#print axioms RamanujanCongruence_5_verbose
+#print axioms RamanujanCongruence_7_verbose
+#print axioms RamanujanCongruence_11_verbose
 
 end verbose

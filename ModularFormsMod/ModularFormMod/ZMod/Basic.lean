@@ -136,7 +136,7 @@ theorem Reduce_Eaddone (p : ℕ) [Fact p.Prime] (hp : 3 ≤ p) :
 end ModularFormMod
 
 /-
-This file proves `coeff_pow_Prime (n) : (f.pow ℓ).coeff n = if ℓ ∣ n then f.coeff (n / ℓ) else 0`
+This section proves `coeff_pow_card (n) : (f.pow ℓ).coeff n = if ℓ ∣ n then f.coeff (n / ℓ) else 0`
 -/
 
 open PowerSeries ModularFormMod.ZMod
