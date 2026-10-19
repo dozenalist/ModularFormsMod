@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 Carter Hastings. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Carter Hastings
+-/
+
 import ModularFormsMod.ModularFormOver.PInteger
 
 
@@ -9,7 +15,6 @@ rationality proof. Its Fourier coefficients are expressed using Bernoulli
 numbers and divisor sums, and rational forms extend to characteristic-zero
 fields equipped with an algebra map to `ℂ`.
 -/
-
 
 
 open ModularForm ModularFormOver UpperHalfPlane MatrixGroups ArithmeticFunction.sigma
@@ -57,8 +62,6 @@ theorem coeff_Eis {k : ℤ} (hk : 3 ≤ k) (hk2 : Even k) (n : ℕ)
     change _ = algebraMap S ℂ (algebraMap ℚ S _)
     rw [← IsScalarTower.algebraMap_apply ℚ S ℂ]
     simp
-
-
 
 
 end ModularFormOver

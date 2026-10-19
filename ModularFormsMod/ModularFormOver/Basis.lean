@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 Carter Hastings. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Carter Hastings
+-/
+
 import Lean.Elab.Tactic.Simproc
 import Lean.Meta.Reduce
 import Mathlib.LinearAlgebra.Dimension.OrzechProperty
@@ -87,7 +93,6 @@ theorem _root_.ModularForm.rank_eq_dim (k : ℤ) : Module.rank ℂ (ModularForm 
   · rw [ModularForm.levelOne_neg_weight_rank_zero (not_le.1 hk), Nat.cast_zero]
 
 
-
 /-- A level-one form of natural weight vanishes if its Fourier expansion has order at least `dim
 k`. -/
 theorem _root_.ModularForm.better_sturm_bound_levelOne_nat {k : ℕ} {f : ModularForm 𝒮ℒ (k : ℤ)}
@@ -96,7 +101,8 @@ theorem _root_.ModularForm.better_sturm_bound_levelOne_nat {k : ℕ} {f : Modula
   have h0 : (qExpansion 1 f).coeff 0 = 0 := by
     by_cases hord : (qExpansion 1 ⇑f).order = 0
     · have : dim k = 0 := by rw [hord] at h; norm_cast at *; exact Nat.eq_zero_of_le_zero h
-      rw [← Nat.cast_eq_zero (R := Cardinal.{0}), ← ModularForm.rank_eq_dim, rank_zero_iff_forall_zero] at this
+      rw [← Nat.cast_eq_zero (R := Cardinal.{0}), ← ModularForm.rank_eq_dim,
+        rank_zero_iff_forall_zero] at this
       simp only [this f, FunLike.coe_zero, qExpansion_zero, map_zero]
     · exact PowerSeries.coeff_of_lt_order _
         (by simpa only [CharP.cast_eq_zero] using pos_iff_ne_zero.mpr hord)
@@ -360,7 +366,6 @@ theorem order_G {R} [CommRing R] [Algebra R ℂ] [FaithfulSMul R ℂ] (k : ℤ)
     simpa only [coeff_def, fourierℂ] using coeff_lt_order_G (R := ℂ) k n hn hi
 
 
-
 /-- The `G` monomials of a fixed weight are linearly independent over the coefficient ring. -/
 theorem G_LI {R} [CommRing R] [Algebra R ℂ] [FaithfulSMul R ℂ] (k : ℤ) :
     LinearIndependent R (fun n : Fin (dim k) => G (R := R) k n.val n.isLt) := by
@@ -530,11 +535,13 @@ open ModularFormOver.Basis
 variable {R : Type} [CommRing R] [Algebra R ℂ] [FaithfulSMul R ℂ]
 
 /-- The rank of level-one forms over a ring with the strong rank condition is `dim k`. -/
-theorem dimension_eq_dim [StrongRankCondition R] : Module.rank R (ModularFormOver R 𝒮ℒ k) = dim k := by
+theorem dimension_eq_dim [StrongRankCondition R] :
+    Module.rank R (ModularFormOver R 𝒮ℒ k) = dim k := by
   rw [rank_eq_card_basis <| GBasis R k, Fintype.card_fin]
 
 /-- The finrank of level-one forms over a ring with the strong rank condition is `dim k`. -/
-theorem finrank_eq_dim [StrongRankCondition R] : Module.finrank R (ModularFormOver R 𝒮ℒ k) = dim k := by
+theorem finrank_eq_dim [StrongRankCondition R] :
+    Module.finrank R (ModularFormOver R 𝒮ℒ k) = dim k := by
   rw [Module.finrank_eq_card_basis <| GBasis R k, Fintype.card_fin]
 
 
@@ -769,7 +776,6 @@ dsimproc reduceP (@P _ _ _ _ _ _) := fun e => do
   return .continue result
 
 
-
 /-- Every monomial in the family `P` has constant q-expansion coefficient one. -/
 @[simp] theorem qExp_P_coeff_zero {R} [CommRing R] [Algebra R ℂ]
     (k : ℤ) (n : ℕ) (hn : n < dim k) :
@@ -788,7 +794,8 @@ dsimproc reduceP (@P _ _ _ _ _ _) := fun e => do
   apply PowerSeries.order_eq_nat.mpr
   exact ⟨by simp, by simp⟩
 
-private theorem dim_monomial (a b : ℕ) :
+/-- The dimension in the weight of an Eisenstein monomial. -/
+theorem dim_monomial (a b : ℕ) :
     dim (a * 4 + b * 6 : ℕ) = a / 3 + b / 2 + 1 := by
   rw [dim_eq_dim', dim']
   simp only [Int.natCast_nonneg, Int.even_iff, Int.ModEq, Int.toNat_natCast, ite_true]
@@ -907,3 +914,5 @@ noncomputable def PBasis (R) [CommRing R] [Algebra R ℂ]
 
 end Basis
 end PBasis
+
+end ModularFormOver

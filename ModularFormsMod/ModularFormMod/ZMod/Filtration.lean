@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 Carter Hastings. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Carter Hastings
+-/
+
 import ModularFormsMod.ModularFormMod.Filtration
 import ModularFormsMod.ModularFormMod.ZMod.HasseIdeal
 import ModularFormsMod.ModularFormMod.ZMod.CoprimeAbarBbar
@@ -19,7 +25,6 @@ The strict-drop criterion is stated in positive weight so that it includes
 the zero form, whose filtration in this development is zero.
 -/
 
-set_option linter.style.header false
 set_option backward.isDefEq.respectTransparency false
 set_option backward.defeqAttrib.useBackward true
 

@@ -1,8 +1,15 @@
+/-
+Copyright (c) 2026 Carter Hastings. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Carter Hastings
+-/
+
 import ModularFormsMod.ModularFormOver.PInteger
 import ModularFormsMod.ModularFormOver.Derivative
 import ModularFormsMod.ModularFormMod.Basic
 import Mathlib.RingTheory.PowerSeries.Expand
 import Mathlib.FieldTheory.Finite.Basic
+import Mathlib.Tactic.NormNum.Prime
 
 /-!
 # Scalar multiplication on modular forms reduced modulo an integer
@@ -22,8 +29,12 @@ instance instRingHomSurjectiveZMod {R : Type} [CommRing R] {n : ℕ}
   ⟨ZMod.ringHom_surjective r⟩
 
 
-scoped[ModularFormMod.ZMod] notation "𝓜" p:max k:max =>
-  ModularFormMod (reduce (p := p)) 𝒮ℒ k
+set_option quotPrecheck false in
+scoped[ModularFormMod.ZMod] notation "𝓜" prime:max weight:max =>
+  (let _ : Fact (Nat.Prime prime) := by
+     all_goals first | infer_instance | exact ⟨by norm_num⟩
+   ModularFormMod (PInteger.reduce (p := prime))
+     (Matrix.SpecialLinearGroup.mapGL (n := Fin 2) (R := ℤ) ℝ).range weight)
 
 private theorem reduce_mk'_eq_ratCast {p : ℕ} [Fact p.Prime]
     (q : ℚ) (hq : padicValRat p q ≥ 0) :

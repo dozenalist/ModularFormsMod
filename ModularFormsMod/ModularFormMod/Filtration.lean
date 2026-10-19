@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 Carter Hastings. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Carter Hastings
+-/
+
 import ModularFormsMod.ModularFormMod.Basic
 import ModularFormsMod.ModularFormMod.Basis
 import Mathlib.NumberTheory.ModularForms.NormTrace
@@ -45,9 +51,6 @@ theorem hasWeight_ext {f : ModularFormMod r Γ k} {g : ModularFormMod r Γ j}
 
 theorem exists_hasWeight (f : ModularFormMod r Γ k) :
     {j : ℤ | f.hasWeight j}.Nonempty := ⟨k, f.hasWeight_self⟩
-
-theorem nonempty_hasWeight_set (f : ModularFormMod r Γ k) :
-    {j : ℤ | f.hasWeight j}.Nonempty := f.exists_hasWeight
 
 section Arithmetic
 
@@ -136,7 +139,7 @@ theorem Filtration_spec (f : ModularFormMod r Γ k) : f.hasWeight f.Filtration :
   by_cases hf : f = 0
   · simp [hf]
   · let : NeZero f := ⟨hf⟩
-    exact Int.csInf_mem f.nonempty_hasWeight_set f.BddBelow_hasWeight_set
+    exact Int.csInf_mem f.exists_hasWeight f.BddBelow_hasWeight_set
 
 theorem Filtration_le {f : ModularFormMod r Γ k} [NeZero f] (hf : f.hasWeight j) :
     f.Filtration ≤ j := csInf_le f.BddBelow_hasWeight_set hf

@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 Carter Hastings. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Carter Hastings
+-/
+
 import ModularFormsMod.ModularFormOver.Basic
 
 /-!
@@ -175,7 +181,6 @@ noncomputable instance (priority := 900) instModuleOfSurjective :
 end TargetScalars
 
 
-
 @[simps]
 noncomputable instance [Γ.HasDetPlusMinusOne] : NatCast (ModularFormMod r Γ 0) where
   natCast n := ⟨n, n, by rw [ModularFormOver.fourier_natCast, map_natCast]⟩
@@ -261,7 +266,6 @@ noncomputable instance instGCommRing [Γ.IsArithmetic] [Γ.HasDetPlusMinusOne] :
   intCast := Int.cast
   intCast_ofNat n := ModularFormMod.ext (by norm_num)
   intCast_negSucc_ofNat n := ModularFormMod.ext (by norm_num)
-
 
 
 /-- The Fourier expansion map as an `S`-linear map for a surjective coefficient reduction. -/

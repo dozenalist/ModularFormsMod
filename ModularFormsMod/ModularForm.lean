@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 Carter Hastings. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Carter Hastings
+-/
+
 import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
 
 /-!
@@ -7,8 +13,6 @@ import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
 integer weights by setting it to zero below weight three. This file proves its
 vanishing in odd weights and gives its Bernoulli and divisor-sum coefficient formula.
 -/
-
-
 
 
 open ModularForm MatrixGroups UpperHalfPlane ArithmeticFunction.sigma

@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 Carter Hastings. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Carter Hastings
+-/
+
 import ModularFormsMod.ModularFormMod.ZMod.Basic
 import ModularFormsMod.ModularFormMod.Derivative
 
@@ -136,6 +142,9 @@ noncomputable def Theta_pow (f : 𝓜 p k) :
     rw [coeff_Theta, ih, pow_succ]
     ring
 
+@[simp] theorem Theta_pow_succ (f : 𝓜 p k) (m : ℕ) :
+    f.Theta_pow (m + 1) = (f.Theta_pow m).Theta.cast (by group) := rfl
+
 
 @[simp] theorem Theta_pow_zero (m : ℕ) : (0 : 𝓜 p k).Theta_pow m = 0 := by
   apply ext_coeff
@@ -182,7 +191,9 @@ noncomputable def Theta_powLinearMap (m : ℕ) :
 
 @[simp] theorem Theta_pow_card (f : 𝓜 p k) :
     (f.Theta_pow p).fourier = f.Theta.fourier := by
-  sorry
+  ext n
+  change coeff n (f.Theta_pow p) = coeff n f.Theta
+  rw [coeff_Theta_pow, coeff_Theta, ZMod.pow_card]
 
 
 end ModularFormMod

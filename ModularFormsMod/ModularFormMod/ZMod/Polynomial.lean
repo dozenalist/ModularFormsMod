@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 Carter Hastings. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Carter Hastings
+-/
+
 import ModularFormsMod.ModularFormMod.Del
 import ModularFormsMod.ModularFormMod.GradedRing
 import ModularFormsMod.ModularFormMod.Derivative
@@ -68,8 +74,8 @@ private theorem e2_ramanujan (R : Type) [CommRing R] [Algebra R ℂ] [FaithfulSM
     congr 1
   simpa only [PowerSeries.smul_eq_C_mul, _root_.map_sub, _root_.map_mul,
     PowerSeries.map_C, _root_.map_ofNat, PowerSeries.map_X, _root_.map_pow,
-    _root_.map_neg, ModularFormMod.map_derivative,
-    ModularFormMod.map_e2Fourier, ModularFormOver.map_fourier,
+    _root_.map_neg, PowerSeries.map_derivative,
+    ModularFormOver.map_e2Fourier, ModularFormOver.map_fourier,
     ModularFormOver.fourierℂ, hq4] using e2_ramanujan_complex
 
 variable (p : ℕ) [isLargePrime p]
@@ -139,7 +145,7 @@ is `-X₀ Abar`. The displayed statement of the lemma has an extra derivative on
       ModularFormMod.Reduce_Eaddone p (by omega)]
     convert hRam using 1
     · simp [PowerSeries.smul_eq_C_mul, cuspWidth_SL2Z, e2FourierAt_SL2Z,
-        Int.cast_add, ModularFormMod.map_derivative, ModularFormMod.map_e2Fourier,
+        Int.cast_add, PowerSeries.map_derivative, ModularFormOver.map_e2Fourier,
         _root_.map_ofNat, pow_two]
     · simp only [g, ModularFormOver.Reduce_fourier, ModularFormOver.fourier_neg,
         ModularFormOver.fourier_mul, _root_.map_neg, _root_.map_mul, hA, mul_one]

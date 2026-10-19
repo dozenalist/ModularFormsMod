@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 Carter Hastings. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Carter Hastings
+-/
+
 import ModularFormsMod.ModularFormOver.QAlgebra
 import ModularFormsMod.ModularFormMod.Defs
 import Mathlib.RingTheory.Ideal.Quotient.Operations

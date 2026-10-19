@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 Carter Hastings. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Carter Hastings
+-/
+
 import Mathlib.RingTheory.PowerSeries.Basic
 
 /-!
@@ -101,18 +107,5 @@ eventually vanish. -/
 theorem eventuallyEq_zero_iff [Semiring α] {a : ℕ → α⟦X⟧} :
     (a ⟶ 0) ↔ ∀ n, ∃ m, ∀ k ≤ n, ∀ j ≥ m, coeff k (a j) = 0 := by
   unfold eventuallyEq; simp only [Pi.zero_apply, map_zero]
-
-
--- lemma sum_X_pow_eventually_zero_iff [Semiring α] (f : ℕ → α) :
---     ( (∑ i ∈ range ·, C (f i) * (X : α ⟦X⟧) ^ i) ⟶ 0 ) ↔ f = 0 := by
---   constructor <;> intro h
---   ext n
---   obtain ⟨m, fo⟩ := h n
---   specialize fo n (le_refl n) (max (n + 1) m) (le_max_of_le_right <| le_refl m)
---   have nlt : n < max (n + 1) m := lt_max_of_lt_left <| lt_add_one n
---   simp_all only [Pi.zero_apply, map_zero, coeff_sum_X_pow]
---   intro n
---   simp only [h, map_zero, zero_mul, sum_const_zero, Pi.zero_apply, implies_true, exists_const]
-
 
 end PowerSeries

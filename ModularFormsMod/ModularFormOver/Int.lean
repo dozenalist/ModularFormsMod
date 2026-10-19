@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 Carter Hastings. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Carter Hastings
+-/
+
 import ModularFormsMod.ModularFormOver.Basic
 import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
 import Mathlib.NumberTheory.ModularForms.EisensteinSeries.E2.Summable
@@ -6,7 +12,6 @@ import Mathlib.NumberTheory.ModularForms.EisensteinSeries.E2.Transform
 import Mathlib.NumberTheory.ModularForms.NormTrace
 import Mathlib.NumberTheory.ModularForms.LevelOne.GradedRing
 import ModularFormsMod.qExp_discriminant
-
 
 
 /-!
@@ -18,11 +23,8 @@ after scalar extension, defines the formal series for `E₂`, and proves
 the identity `1728 • Δ = E₄³ - E₆²` over the integers.
 -/
 
-#check ModularForm.restrict
-
 open ModularForm hiding E₄ E₆
 open ModularFormOver UpperHalfPlane CongruenceSubgroup MatrixGroups ArithmeticFunction.sigma
-
 
 
 variable {F : Type*} [FunLike F ℍ ℂ] {f : F} {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ}
@@ -54,50 +56,6 @@ private lemma bernoulli_four : bernoulli 4 = -(1 / 30) := by
 
 private lemma bernoulli_six : bernoulli 6 = 1 / 42 := by
   decide +kernel
-
-private lemma bernoulli'_six : bernoulli' 6 = 1 / 42 := by
-  decide +kernel
-
-private lemma bernoulli_eight : bernoulli 8 = -(1 / 30) := by
-  have h := sum_bernoulli' 9
-  simp only [Finset.sum_range_succ] at h
-  norm_num [bernoulli'_eq_zero_of_odd, bernoulli'_two, bernoulli'_four,
-    bernoulli'_six] at h
-  norm_num [Nat.choose] at h
-  rw [bernoulli_eq_bernoulli'_of_ne_one (by decide : 8 ≠ 1)]
-  linarith
-
-private lemma bernoulli'_eight : bernoulli' 8 = -(1 / 30) := by
-  rw [← bernoulli_eq_bernoulli'_of_ne_one (by decide : 8 ≠ 1), bernoulli_eight]
-
-private lemma bernoulli_ten : bernoulli 10 = 5 / 66 := by
-  have h := sum_bernoulli' 11
-  simp only [Finset.sum_range_succ] at h
-  norm_num [bernoulli'_eq_zero_of_odd, bernoulli'_two, bernoulli'_four,
-    bernoulli'_six, bernoulli'_eight] at h
-  norm_num [Nat.choose] at h
-  rw [bernoulli_eq_bernoulli'_of_ne_one (by decide : 10 ≠ 1)]
-  linarith
-
-private lemma bernoulli'_ten : bernoulli' 10 = 5 / 66 := by
-  rw [← bernoulli_eq_bernoulli'_of_ne_one (by decide : 10 ≠ 1), bernoulli_ten]
-
-private lemma bernoulli_twelve' : bernoulli' 12 = -(691 / 2730) := by
-  have h := sum_bernoulli' 13
-  simp only [Finset.sum_range_succ] at h
-  norm_num [bernoulli'_eq_zero_of_odd, bernoulli'_two, bernoulli'_four,
-    bernoulli'_six, bernoulli'_eight, bernoulli'_ten] at h
-  norm_num [Nat.choose] at h
-  linarith
-
-private lemma bernoulli_fourteen : bernoulli 14 = 7 / 6 := by
-  have h := sum_bernoulli' 15
-  simp only [Finset.sum_range_succ] at h
-  norm_num [bernoulli'_eq_zero_of_odd, bernoulli'_two, bernoulli'_four,
-    bernoulli'_six, bernoulli'_eight, bernoulli'_ten, bernoulli_twelve'] at h
-  norm_num [Nat.choose] at h
-  rw [bernoulli_eq_bernoulli'_of_ne_one (by decide : 14 ≠ 1)]
-  linarith
 
 end bernoulli
 
@@ -217,7 +175,6 @@ theorem coeff_discriminant (n : ℕ) : coeff R n Δ S = (discProduct n).coeff n 
       using (map_natCast _ _ : PowerSeries.constantCoeff 24 = (24 : S))
 
 
-
 /-- The formal Eisenstein series `E₂ = 1 - 24 ∑ n ≥ 1, σ₁(n) X^n` over a coefficient ring. -/
 noncomputable def E2fourier (R : Type := ℤ) [CommRing R] [Algebra R ℂ] : PowerSeries R :=
   .mk fun n => if n = 0 then 1 else -24 * σ 1 n
@@ -237,10 +194,6 @@ theorem smul_discriminant_eq_E₄E₆ :
         Int.reduceMul, sub_apply, cast_apply, pow_apply E₄, pow_apply E₆]
     field_simp
     rfl
-
-
-
-
 
 
 end LevelOne

@@ -1,11 +1,14 @@
+/-
+Copyright (c) 2026 Carter Hastings. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Carter Hastings
+-/
+
 import ModularFormsMod.ModularFormOver.Basis
 import Mathlib.Algebra.DirectSum.Algebra
 import Mathlib.LinearAlgebra.Finsupp.VectorSpace
 import Mathlib.RingTheory.MvPolynomial.Basic
 import Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous
-
-set_option backward.isDefEq.respectTransparency false
-set_option backward.defeqAttrib.useBackward true
 
 /-!
 # The polynomial presentation of level-one modular forms
@@ -15,6 +18,9 @@ ring is a polynomial algebra in `E₄` and `E₆`, of weights four and six.
 Its weight-`k` piece corresponds to the weighted homogeneous polynomials of degree `k`.
 The linear map `toPolynomial` gives the polynomial representing a form of a fixed weight.
 -/
+
+set_option backward.isDefEq.respectTransparency false
+set_option backward.defeqAttrib.useBackward true
 
 noncomputable section
 
@@ -108,12 +114,6 @@ private theorem weight_eq (d : Fin 2 →₀ ℕ) :
     Finsupp.weight eisensteinWeights d = monomialWeight d := by
   rw [Finsupp.weight_eq_sum, Fin.sum_univ_two]
   simp [eisensteinWeights, monomialWeight]
-
-private theorem dim_monomial (a b : ℕ) :
-    dim (a * 4 + b * 6 : ℕ) = a / 3 + b / 2 + 1 := by
-  rw [dim_eq_dim', dim']
-  simp only [Int.natCast_nonneg, Int.even_iff, Int.ModEq, Int.toNat_natCast, ite_true]
-  split_ifs <;> omega
 
 private theorem monomialIndex_lt (d : Fin 2 →₀ ℕ) :
     d 0 / 3 < dim (monomialWeight d) := by

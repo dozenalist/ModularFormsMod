@@ -1,8 +1,14 @@
+/-
+Copyright (c) 2026 Carter Hastings. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Carter Hastings
+-/
+
 import Mathlib.RingTheory.Localization.AtPrime.Basic
 import Mathlib.RingTheory.Localization.FractionRing
 import Mathlib.RingTheory.Ideal.NatInt
 import Mathlib.RingTheory.Int.Basic
-import Mathlib.Data.Complex.Basic
+import Mathlib.Basic.Complex.Basic
 import Mathlib.Algebra.Field.ZMod
 import Mathlib.Algebra.GroupWithZero.Invertible
 import Mathlib.NumberTheory.Padics.PadicVal.Basic
@@ -19,7 +25,6 @@ constructs embeddings into characteristic-zero fields, reduction to `ZMod p`,
 and fraction constructors. It also provides the notation `ℤ[1/z]`, its canonical
 maps, and invertibility instances used for modular forms over coefficient rings.
 -/
-
 
 
 variable (p : ℕ) [Fact p.Prime]
@@ -394,7 +399,6 @@ instance [isLargePrime p] : Invertible (6 : ℤ(p)) := by
   simpa only [eq_intCast, map_one, Int.cast_ofNat, Nat.cast_ofNat] using
     (IsLocalization.mk'_spec' ℤ(p) (1 : ℤ)
       (⟨6, hden⟩ : (Ideal.span {(p : ℤ)}).primeCompl))
-
 
 
 end PInteger

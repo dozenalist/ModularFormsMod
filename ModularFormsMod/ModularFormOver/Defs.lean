@@ -1,6 +1,10 @@
-import Mathlib.NumberTheory.ModularForms.QExpansion
+/-
+Copyright (c) 2026 Carter Hastings. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Carter Hastings
+-/
 
-set_option linter.style.header false
+import Mathlib.NumberTheory.ModularForms.QExpansion
 
 /-!
 # Modular forms with Fourier coefficients in a chosen ring

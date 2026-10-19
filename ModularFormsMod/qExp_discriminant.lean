@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 Carter Hastings. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Carter Hastings
+-/
+
 import Mathlib.NumberTheory.ModularForms.Discriminant
 import ModularFormsMod.discProduct
 
@@ -8,7 +14,6 @@ The Fourier coefficients of the discriminant are the stable integer coefficients
 of `discProduct`. The proof relates coefficientwise stabilization of finite formal
 products to locally uniform convergence of their analytic evaluations.
 -/
-
 
 
 open ModularForm PowerSeries MatrixGroups UpperHalfPlane Set DirectSum Filter Function
@@ -29,12 +34,11 @@ noncomputable section
 coefficient of `discProduct m`. -/
 theorem qExpansion_discriminant : qExpansion 1 (CuspForm.discriminant : ModularForm 𝒮ℒ 12) =
     PowerSeries.map (algebraMap ℤ ℂ) (.mk fun m => (discProduct m).coeff m) := by
-
   let D : ℕ → ℤ := fun n => (discProduct n).coeff n
   let c : ℕ → ℂ := fun n ↦ ((discProduct n).coeff n : ℂ)
   let F : ℂ⟦X⟧ := PowerSeries.mk c
-  let disc : ModularForm (Matrix.SpecialLinearGroup.mapGL ℝ).range 12 := ModularFormClass.modularForm CuspForm.discriminant
-
+  let disc : ModularForm (Matrix.SpecialLinearGroup.mapGL ℝ).range 12 :=
+    ModularFormClass.modularForm CuspForm.discriminant
   have hF : Tendsto (discProduct (α := ℂ)) atTop (𝓝 F) := by
     rw [PowerSeries.WithPiTopology.tendsto_iff_coeff_tendsto]
     intro d
@@ -54,7 +58,6 @@ theorem qExpansion_discriminant : qExpansion 1 (CuspForm.discriminant : ModularF
       rw [zsmul_eq_mul]
       simp only [hcast, PowerSeries.coeff_C_mul_X_pow]
     simp [hdn]
-
   let p : ℕ → ℂ⟦X⟧ := fun i ↦ (1 - (X : ℂ⟦X⟧) ^ (i + 1)) ^ 24
   have hp : Multipliable p := by
     exact (PowerSeries.WithPiTopology.multipliable_one_sub_X_pow ℂ).pow 24
@@ -63,7 +66,6 @@ theorem qExpansion_discriminant : qExpansion 1 (CuspForm.discriminant : ModularF
     simpa [p] using tendsto_const_nhds.mul hp.tendsto_prod_tprod_nat
   have hprod : (X : ℂ⟦X⟧) * ∏' i, p i = F :=
     tendsto_nhds_unique hpLim hF
-
   let U : Set ℂ := Metric.ball 0 1
   let G : ℕ → ℂ → ℂ := fun n q ↦ q * ∏ i ∈ Finset.range n, (1 - q ^ (i + 1)) ^ 24
   let Ginf : ℂ → ℂ := fun q ↦ q * ∏' i, (1 - q ^ (i + 1)) ^ 24
@@ -106,7 +108,6 @@ theorem qExpansion_discriminant : qExpansion 1 (CuspForm.discriminant : ModularF
     rw [Multipliable.tprod_pow]
     exact ModularForm.multipliable_one_sub_pow (by
       simpa [U, Metric.mem_ball] using hq)
-
   let P : ℕ → Polynomial ℂ := fun n ↦ Polynomial.X *
     ∏ i ∈ Finset.range n, (1 - Polynomial.X ^ (i + 1)) ^ 24
   have hG_eval (n : ℕ) : G n = fun q ↦ (P n).eval q := by
@@ -133,10 +134,10 @@ theorem qExpansion_discriminant : qExpansion 1 (CuspForm.discriminant : ModularF
             DifferentiableOn ℂ (iteratedDeriv d (G n)) U := by
           filter_upwards [] with n
           rw [hG_eval n]
-          exact (Polynomial.contDiff_aeval (P n) (d + 1)).differentiable_iteratedDeriv' d |>.differentiableOn
+          exact (Polynomial.contDiff_aeval (P n) (d + 1)).differentiable_iteratedDeriv' d
+            |>.differentiableOn
         simpa [iteratedDeriv_succ, Function.comp_def] using
           ih.deriv hdiff Metric.isOpen_ball
-
   apply PowerSeries.ext
   intro d
   rw [PowerSeries.coeff_map]

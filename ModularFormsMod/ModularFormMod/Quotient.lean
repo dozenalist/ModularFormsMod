@@ -1,6 +1,10 @@
-import ModularFormsMod.ModularFormMod.BaseChange
+/-
+Copyright (c) 2026 Carter Hastings. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Carter Hastings
+-/
 
-set_option linter.style.header false
+import ModularFormsMod.ModularFormMod.BaseChange
 
 /-!
 # Reduced forms as modules over the effective coefficient ring

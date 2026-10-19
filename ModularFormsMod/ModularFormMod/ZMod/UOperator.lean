@@ -1,8 +1,12 @@
+/-
+Copyright (c) 2026 Carter Hastings. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Carter Hastings
+-/
+
 import ModularFormsMod.ModularFormMod.ZMod.Theta
 import ModularFormsMod.ModularFormMod.Hecke
 import ModularFormsMod.ModularFormMod.Basis
-
-set_option linter.style.header false
 
 /-!
 # The U operator on modular forms modulo a prime

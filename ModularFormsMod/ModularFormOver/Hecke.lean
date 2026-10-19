@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 Carter Hastings. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Carter Hastings
+-/
+
 import ModularFormsMod.ModularFormOver.Basic
 import LeanModularForms.HeckeRIngs.GL2.FourierHecke
 import LeanModularForms.Modularforms.LFunction
@@ -75,17 +81,6 @@ def HeckeOver.changeCoeff {R S : Type*} [CommRing R] [Algebra R ℂ]
   ⟨T.1, fun k f hf₁ hf₂ => ⟨hchar k f hf₁, hT k f hf₁ hf₂⟩⟩
 
 
--- instance {R N} [CommRing R] [Algebra R ℂ] [NeZero N] (k : ℤ) :
---     DFunLike (HeckeOver R N) (ModularForm (Gamma1 N) k) ((f : ModularForm (Gamma1 N) k) → ModularForm (Gamma1 N) k) where
---   coe f := HeckeOver.toEnd R N f k
---   coe_injective := by
---     intro f g h
---     cases f
---     cases g
---     congr
---     simp_all
---     sorry
-
 open UpperHalfPlane
 open scoped MatrixGroups PInteger
 
@@ -95,7 +90,6 @@ noncomputable instance awayComplexAlgebra (p : ℕ) [NeZero p] :
   letI : Invertible ((p : ℤ) : ℂ) :=
     invertibleOfNonzero (by exact_mod_cast (NeZero.ne p))
   exact (IsLocalization.Away.Intlift ℂ).toAlgebra
-
 
 
 -- The Fourier coefficient formula involves large, but terminating, simplification steps.
@@ -375,7 +369,7 @@ noncomputable instance Tp.coeToRing (N : ℕ) [NeZero N] (p : ℕ) [Fact p.Prime
       Classical.choose_spec (hpre r)
     let hu : IsUnit (algebraMap ℤ R (p : ℤ)) := by
       convert (IsLocalization.Away.algebraMap_isUnit (p : ℤ)).map
-        (algebraMap (ℤ[1/(p : ℤ)]) R) using 1 <;> simp
+        (algebraMap (ℤ[1/(p : ℤ)]) R) using 1; simp
     let u : Rˣ := hu.unit
     have hu_spec : (u : R) = algebraMap ℤ R (p : ℤ) := hu.unit_spec
     let φ : R →* ℂ := (algebraMap R ℂ).toMonoidHom
@@ -464,10 +458,9 @@ noncomputable instance Tn.coeToField (N : ℕ) [NeZero N] (n : ℕ) [NeZero n]
       simpa only [ModularForm.qExp_def,
         ModularForms.strictWidthInfty_Gamma1_mapGL] using hc
     have hpow : algebraMap K ℂ ((d : K) ^ (k - 1)) = (d : ℂ) ^ (k - 1) := by
-      simpa using (map_zpow (algebraMap K ℂ) (d : K) (k - 1))
+      simp
     rw [map_mul, hpow, hc']
     simp [trivialChar, hdN]
-
 
 
 end ModularFormOver

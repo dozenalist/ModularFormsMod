@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 Carter Hastings. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Carter Hastings
+-/
+
 import ModularFormsMod.ModularFormMod.GradedRing
 import ModularFormsMod.ModularFormMod.Derivative
 import ModularFormsMod.ModularFormMod.Operators
 import ModularFormsMod.ModularFormMod.ZMod.Basic
-
-set_option linter.style.header false
 
 /-!
 # Examples of coefficient reduction and relations between weights

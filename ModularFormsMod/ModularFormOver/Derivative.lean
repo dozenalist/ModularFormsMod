@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 Carter Hastings. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Carter Hastings
+-/
+
 import ModularFormsMod.ModularFormOver.Basic
 import Mathlib.NumberTheory.ModularForms.Derivative
 import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
@@ -15,6 +21,13 @@ In the parameter `q = exp (2 π i τ / h)`, its Fourier expansion is
 open UpperHalfPlane ModularForm
 open Real Complex
 open scoped MatrixGroups Topology Manifold
+
+/-- Mapping coefficients commutes with formal differentiation. -/
+theorem PowerSeries.map_derivative {R S : Type} [CommSemiring R] [CommSemiring S]
+    (s : R →+* S) (F : PowerSeries R) :
+    PowerSeries.map s F.derivative = (PowerSeries.map s F).derivative := by
+  ext n
+  simp [PowerSeries.coeff_map, PowerSeries.coeff_derivative]
 
 namespace ModularFormOver
 
@@ -301,24 +314,18 @@ noncomputable def normalizedSerreFourier (R : Type) [CommRing R] [Algebra R ℂ]
   (12 : R) • (PowerSeries.X * (fourier R f).derivative) -
     ((k : R) * cuspWidth Γ) • (e2FourierAt Γ R * fourier R f)
 
-private theorem map_e2Fourier (R : Type) [CommRing R] [Algebra R ℂ] :
-    PowerSeries.map (algebraMap R ℂ) (e2Fourier R) = e2Fourier ℂ := by
+/-- The integral `E₂` series commutes with every coefficient homomorphism. -/
+theorem map_e2Fourier {R S : Type} [CommRing R] [CommRing S] (s : R →+* S) :
+    PowerSeries.map s (e2Fourier R) = e2Fourier S := by
   ext n
   simp only [e2Fourier, PowerSeries.coeff_map, PowerSeries.coeff_mk]
-  split_ifs
-  · exact map_one (algebraMap R ℂ)
-  · simp only [map_mul, map_neg, map_ofNat, map_natCast]
+  split_ifs <;> simp [map_ofNat]
 
-private theorem map_e2FourierAt [Γ.le_SL2Z] [Γ.IsArithmetic]
-    (R : Type) [CommRing R] [Algebra R ℂ] :
-    PowerSeries.map (algebraMap R ℂ) (e2FourierAt Γ R) = e2FourierAt Γ ℂ := by
+/-- The cusp-width substitution in `E₂` commutes with coefficient homomorphisms. -/
+theorem map_e2FourierAt [Γ.le_SL2Z] [Γ.IsArithmetic]
+    {R S : Type} [CommRing R] [CommRing S] (s : R →+* S) :
+    PowerSeries.map s (e2FourierAt Γ R) = e2FourierAt Γ S := by
   simp only [e2FourierAt, PowerSeries.map_expand, map_e2Fourier]
-
-private theorem map_derivative {R S : Type} [CommSemiring R] [CommSemiring S]
-    (f : R →+* S) (g : PowerSeries R) :
-    PowerSeries.map f g.derivative = (PowerSeries.map f g).derivative := by
-  ext n
-  simp [PowerSeries.coeff_map, PowerSeries.coeff_derivative]
 
 private theorem map_smul_series {R S : Type} [CommSemiring R] [CommSemiring S]
     (f : R →+* S) (a : R) (g : PowerSeries R) :
@@ -333,7 +340,8 @@ private theorem map_normalizedSerreFourier (R : Type) [CommRing R]
       qExp (((12 : ℂ) * cuspWidth Γ) •
         Derivative.serreDerivativeMF k (f : ModularForm Γ k) hΓ.le) := by
   simp only [normalizedSerreFourier, map_sub, map_smul_series, map_mul, PowerSeries.map_X,
-    map_derivative, map_fourier R R f, map_e2FourierAt, map_ofNat, map_intCast, map_natCast]
+    PowerSeries.map_derivative, map_fourier R R f, map_e2FourierAt, map_ofNat,
+    map_intCast, map_natCast]
   exact (qExp_normalizedSerre (f := (f : ModularForm Γ k))).symm
 
 /-- The Serre derivative scaled by `12 * cuspWidth Γ`, preserving coefficients over `R`. -/

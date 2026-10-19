@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 Carter Hastings. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Carter Hastings
+-/
+
 import Mathlib.NumberTheory.Bernoulli
 import Mathlib.Data.Nat.Squarefree
 
@@ -9,15 +15,10 @@ congruence modulo `p²`, Voronoi's congruence, and the weak form of Kummer's
 congruence modulo `p`. These imply the nonnegative valuation of the Eisenstein
 coefficient factor at weight `p + 1`.
 
-The namespace `ThetaOperator.KummerCongruence` also provides predicates for
-`p`-integrality, residues in `ZMod p`, and wrappers for the Faulhaber and
-von Staudt–Clausen identities.
 -/
 
 
-
 section ImportedKummer
-
 
 
 @[expose] public section
@@ -28,17 +29,11 @@ open Nat Finset Finset.Nat PowerSeries
 variable (A : Type*) [CommRing A] [Algebra ℚ A]
 
 
-
 namespace Bernoulli
 
 /- Indicator function that is `1` if `(p - 1) ∣ k` and `0` otherwise. -/
 private noncomputable def vonStaudtIndicator (k p : ℕ) : ℚ :=
   if (p - 1) ∣ k then 1 else 0
-
-/- The primes `q < 2k + 2` with `(q - 1) ∣ 2k` — the primes appearing in the
-von Staudt-Clausen correction sum. -/
-private abbrev vonStaudtPrimes (k : ℕ) : Finset ℕ :=
-  (range (k + 2)).filter fun q ↦ q.Prime ∧ (q - 1) ∣ k
 
 /- Over `ZMod p`, the nonzero `l`-th power sum equals the negative indicator of `(p - 1) ∣ l`. -/
 private lemma sum_pow_add_indicator_eq_zero {p : ℕ} (l : ℕ) [Fact p.Prime] :
@@ -78,30 +73,6 @@ private lemma pIntegral_div_natCast {p : ℕ} [Fact p.Prime] {a : ℚ} {n : ℕ}
     simpa [Int.padicValuation_eq_one_iff, Int.natCast_dvd_natCast]
   rw [div_eq_mul_inv]
   exact mul_mem ha (by simp [Valuation.mem_integer_iff, hvn])
-
-/- Denominators of the "other primes" part of the indicator sum
-stay coprime to a fixed prime `p`. -/
-private lemma prod_one_div_prime_den_coprime (k : ℕ) {p : ℕ} [Fact p.Prime] :
-    (∏ q ∈ vonStaudtPrimes k with q ≠ p, ((1 : ℚ) / q).den).Coprime p := by
-  refine Nat.Coprime.prod_left fun q hq ↦ ?_
-  simp only [Finset.mem_filter, Finset.mem_range] at hq
-  obtain ⟨⟨_, hq_prime, _⟩, hne⟩ := hq
-  rw [show ((1 : ℚ) / q).den = q by simp [hq_prime.ne_zero]]
-  exact (Nat.coprime_primes hq_prime Fact.out).mpr hne
-
-/- Splits the prime-indexed correction sum into the `p`-term (`vonStaudtIndicator / p`)
-plus the rest. -/
-private lemma sum_one_div_prime_eq_indicator_div_add {k p : ℕ} (hk : k > 0) [Fact p.Prime] :
-    (∑ q ∈ vonStaudtPrimes k, (1 : ℚ) / q) =
-    vonStaudtIndicator k p / p + ∑ q ∈ vonStaudtPrimes k with q ≠ p, (1 : ℚ) / q := by
-  rw [Finset.sum_congr (Finset.filter_ne' (vonStaudtPrimes k) p) fun _ _ ↦ rfl]
-  by_cases hdvd : (p - 1) ∣ k
-  · have hp_mem : p ∈ vonStaudtPrimes k := Finset.mem_filter.mpr
-      ⟨Finset.mem_range.mpr (by have := Nat.le_of_dvd (by lia) hdvd; lia), Fact.out, hdvd⟩
-    rw [← Finset.add_sum_erase _ _ hp_mem]
-    simp [vonStaudtIndicator, hdvd]
-  · rw [Finset.erase_eq_of_notMem fun h ↦ hdvd (Finset.mem_filter.mp h).2.2]
-    simp [vonStaudtIndicator, hdvd]
 
 /- If the `p`-adic valuation of `M` is at most `N`, then `p^N / M` is `p`-integral. -/
 private lemma pIntegral_pow_div {p M N : ℕ} [Fact p.Prime] (hM : M ≠ 0)
@@ -364,50 +335,6 @@ theorem squarefree_den_bernoulli {k : ℕ} :
     _ ∣ (1 / p : ℚ).den * (p * bernoulli k).den := Rat.mul_den_dvd _ _
     _ = _ := by simp [hp.ne_zero]
 
-/- Extends the fixed-prime nondivisibility result to the full prime correction sum. -/
-private lemma not_dvd_den_vonStaudt_sum {k p : ℕ} (hk : Even k) [Fact p.Prime] :
-    pIntegral p (bernoulli k + ∑ q ∈ vonStaudtPrimes k, (1 : ℚ) / q) := by
-  obtain rfl | hk₀ : k = 0 ∨ k > 0 := by grind [even_iff_exists_two_mul]
-  · simp [vonStaudtPrimes, range_add_one, not_prime_one, not_prime_zero, Finset.filter_insert,
-      Finset.filter_singleton]
-  rw [sum_one_div_prime_eq_indicator_div_add (p := p) (by lia), ← add_assoc]
-  apply add_mem (pIntegral_bernoulli_add_indicator hk₀ hk) (_ : pIntegral _ _)
-  rw [pIntegral_iff_not_dvd_den, ← Nat.Prime.coprime_iff_not_dvd Fact.out]
-  exact (prod_one_div_prime_den_coprime _).symm.of_dvd_right (Rat.den_sum_dvd_prod_den _ _)
-
-
-/- `p · bernoulli i` is `p`-integral for every `i` (von Staudt: `v_p(B_i) ≥ -1`). -/
-private theorem pIntegral_p_mul_bernoulli {p : ℕ} [Fact p.Prime] (i : ℕ) :
-    pIntegral p (p * bernoulli i) := by
-  have hp : p.Prime := Fact.out
-  rcases Nat.even_or_odd i with he | ho
-  · obtain ⟨l, rfl⟩ := even_iff_exists_two_mul.1 he
-    rcases Nat.eq_zero_or_pos l with rfl | hl
-    · simp
-    · have hid : p * (bernoulli (2 * l) + vonStaudtIndicator (2 * l) p / p)
-                 - vonStaudtIndicator (2 * l) p = p * bernoulli (2 * l) := by
-        field [hp.ne_zero]
-      rw [← hid]
-      apply sub_mem (mul_mem (natCast_mem _ p) (pIntegral_bernoulli_add_indicator (by lia) he))
-      simp [vonStaudtIndicator, apply_ite]
-  · obtain rfl | hne := eq_or_ne i 1
-    · rw [bernoulli_one]
-      obtain rfl | hp2 := eq_or_ne p 2
-      · norm_num
-      · have h2 : ¬ p ∣ 2 := fun hd => hp2 ((Nat.prime_dvd_prime_iff_eq hp Nat.prime_two).mp hd)
-        have hph : ((p : ℚ) * (-1 / 2) : ℚ) = -((p : ℚ) / (2 : ℕ)) := by push_cast; ring
-        rw [hph]
-        exact neg_mem (pIntegral_div_natCast (natCast_mem _ p) h2)
-    · obtain ⟨m, rfl⟩ := ho
-      rw [bernoulli_eq_zero_of_odd ⟨m, rfl⟩ (by lia), mul_zero]
-      exact zero_mem _
-
-/-- `(p : ℚ) · bernoulli i` is `p`-integral: `p` does not divide the denominator of `p · Bᵢ`
-(equivalently `v_p(Bᵢ) ≥ -1`). -/
-theorem not_dvd_den_p_mul_bernoulli {p : ℕ} [Fact p.Prime] (i : ℕ) :
-    ¬ p ∣ ((p : ℚ) * bernoulli i).den :=
-  Rat.padicValuation_le_one_iff.mp (pIntegral_p_mul_bernoulli i)
-
 /- The denominator of a `p`-integral rational is a unit mod `p`. -/
 private theorem den_ne {p : ℕ} [Fact p.Prime] {x : ℚ} (hx : pIntegral p x) :
     (x.den : ZMod p) ≠ 0 := by
@@ -496,7 +423,7 @@ theorem faulhaber_mod_sq {p : ℕ} [Fact p.Prime] {k : ℕ} (hk : Even k) (hk2 :
           = ((p : ℚ) * bernoulli i)
             * ((k.choose i : ℚ) * ((p : ℚ) ^ (k - 2 - i) / ((k + 1 - i : ℕ) : ℚ))) := by ring
       rw [hpeel, hregroup]
-      refine mul_mem (pIntegral_p_mul_bernoulli i) (mul_mem (natCast_mem _ _) ?_)
+      refine mul_mem (pIntegral_mul_bernoulli (k := i)) (mul_mem (natCast_mem _ _) ?_)
       refine pIntegral_pow_div (by omega) ?_
       have h3 : 3 ≤ k + 1 - i := by omega
       have hb := factorization_add_three_le hp5 h3
@@ -865,66 +792,3 @@ theorem padicVal_bernoulli_add_one (p) [Fact p.Prime] :
     · norm_num [bernoulli]
     · norm_num [bernoulli]
       exact zero_le_padicValRat_of_nat 240
-
-
-open scoped Nat
-
-namespace ThetaOperator.KummerCongruence
-
-noncomputable section
-
-/-- A rational number is p-integral when its multiplicative p-adic valuation is at most one. -/
-def PIntegral (p : ℕ) (x : ℚ) [Fact p.Prime] : Prop :=
-  Rat.padicValuation p x ≤ 1
-
-/-- Reduce a rational numerator modulo `p` and multiply by the inverse of the reduced denominator.
-For p-integral inputs this is reduction to the residue field. -/
-def residue (p : ℕ) (x : ℚ) : ZMod p :=
-  (x.num : ZMod p) * (x.den : ZMod p)⁻¹
-
-/-- A rational number is p-integral precisely when its denominator is prime to `p`. -/
-theorem pIntegral_iff {p : ℕ} [Fact p.Prime] (x : ℚ) :
-    PIntegral p x ↔ ¬p ∣ x.den := by
-  exact Rat.padicValuation_le_one_iff
-
-/-- The residue is the reduced numerator multiplied by the inverse of the reduced denominator. -/
-theorem residue_eq_inv (p : ℕ) (x : ℚ) :
-    residue p x = (x.num : ZMod p) * (x.den : ZMod p)⁻¹ := by
-  rfl
-
-/-- The normalized Bernoulli value `bernoulli n / n` appearing in Kummer's congruence. -/
-def normalizedBernoulli (n : ℕ) : ℚ := bernoulli n / n
-
-/-- The rational power sum of degree `n` over the integers from zero to `N - 1`. -/
-def powerSum (N n : ℕ) : ℚ :=
-  ∑ a ∈ Finset.range N, (a : ℚ) ^ n
-
-/-- The sum of `1 / q` over primes with `q - 1 ∣ n`, using the bound `q < n + 2`. -/
-def vonStaudtCorrection (n : ℕ) : ℚ :=
-  ∑ q ∈ Finset.range (n + 2) with q.Prime ∧ (q - 1) ∣ n, (1 : ℚ) / q
-
-/-!
-## Step 1: the identities used by the proof
-
-The first two statements are wrappers around the existing Faulhaber and
-von Staudt--Clausen theorems.  Keeping them in this file makes the later
-`p`-local argument independent of the exact shape of the upstream API.
--/
-
-/-- Faulhaber's formula expresses a finite power sum in terms of Bernoulli numbers. -/
-theorem powerSum_eq_faulhaber (N n : ℕ) :
-    powerSum N n =
-      ∑ i ∈ Finset.range (n + 1),
-        bernoulli i * ((n + 1).choose i) * (N : ℚ) ^ (n + 1 - i) / (n + 1) := by
-  simpa [powerSum] using (sum_range_pow N n)
-
-/-- Adding the von Staudt correction to an even-index Bernoulli number gives an integer. -/
-theorem bernoulli_add_vonStaudtCorrection_is_integer (n : ℕ) :
-    bernoulli (2 * n) + vonStaudtCorrection (2 * n) ∈ Set.range Int.cast := by
-  simpa [vonStaudtCorrection] using (Bernoulli.vonStaudt_clausen n)
-
-
-
-end
-
-end ThetaOperator.KummerCongruence

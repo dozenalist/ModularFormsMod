@@ -1,7 +1,11 @@
+/-
+Copyright (c) 2026 Carter Hastings. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Carter Hastings
+-/
+
 import ModularFormsMod.ModularFormMod.BaseChange
 import ModularFormsMod.ModularFormMod.HasseIdeal
-
-set_option linter.style.header false
 
 /-!
 # Polynomial presentation of the graded algebra of reduced level-one forms
@@ -74,12 +78,6 @@ def PBasis (k : ℤ) : Module.Basis (Fin (dim k)) S (ModularFormMod r 𝒮ℒ k)
     ModularFormOver.Basis.PBasis_apply]
 
 private def monomialWeight (d : Fin 2 →₀ ℕ) : ℤ := d 0 * 4 + d 1 * 6
-
-private theorem dim_monomial (a b : ℕ) :
-    dim (a * 4 + b * 6 : ℕ) = a / 3 + b / 2 + 1 := by
-  rw [dim_eq_dim', dim']
-  simp only [Int.natCast_nonneg, Int.even_iff, Int.ModEq, Int.toNat_natCast, ite_true]
-  split_ifs <;> omega
 
 private theorem monomialIndex_lt (d : Fin 2 →₀ ℕ) :
     d 0 / 3 < dim (monomialWeight d) := by

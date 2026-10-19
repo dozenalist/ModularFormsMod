@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 Carter Hastings. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Carter Hastings
+-/
+
 import ModularFormsMod.ModularFormOver.GradedRing
 import ModularFormsMod.ModularFormOver.Derivative
 import Mathlib.Algebra.MvPolynomial.PDeriv
@@ -10,8 +16,6 @@ import Mathlib.NumberTheory.ModularForms.RamanujanFormula
 `Del X₁ = -6 X₀²`. Polynomial representation identifies it with the normalized
 Serre derivative `12 θ - k E₂` on level-one modular forms.
 -/
-
-set_option linter.style.header false
 
 noncomputable section
 

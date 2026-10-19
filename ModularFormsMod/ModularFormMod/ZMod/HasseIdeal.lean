@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 Carter Hastings. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Carter Hastings
+-/
+
 import ModularFormsMod.ModularFormMod.ZMod.SquarefreeAbar
 import Mathlib.Algebra.MvPolynomial.Nilpotent
 import Mathlib.RingTheory.ZMod.UnitsCyclic

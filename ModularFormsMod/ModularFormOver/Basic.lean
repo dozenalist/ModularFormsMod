@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 Carter Hastings. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Carter Hastings
+-/
+
 import ModularFormsMod.ModularFormOver.Defs
 
 /-!
@@ -9,15 +15,12 @@ such rings, proves compatibility with arithmetic and scalar extension, and
 establishes that a modular form is determined by its Fourier coefficients.
 -/
 
-set_option linter.style.header false
-
 
 namespace ModularFormOver
 
 open ModularForm PowerSeries UpperHalfPlane
 
 variable {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} {F : Type*} [FunLike F ℍ ℂ]
-
 
 
 /-- A Fourier expansion defined over `R` is also defined over a compatible algebra `S`. -/
@@ -55,7 +58,6 @@ omit hF in
   [CommRing S] [Algebra R S] [Algebra S ℂ] [IsScalarTower R S ℂ]
     (f : ModularFormOver R Γ k) (z : ℍ) :
   f.tower S z = f z := rfl
-
 
 
 /-- The Fourier expansion of a form over `R`, with coefficients in a compatible ring `S`. -/

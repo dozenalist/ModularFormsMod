@@ -1,7 +1,11 @@
+/-
+Copyright (c) 2026 Carter Hastings. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Carter Hastings
+-/
+
 import ModularFormsMod.ModularFormMod.Map
 import ModularFormsMod.ModularFormOver.Derivative
-
-set_option linter.style.header false
 
 /-!
 # The normalized Serre derivative after coefficient reduction
@@ -20,24 +24,6 @@ variable {R S T : Type} [CommRing R] [Algebra R ℂ] [FaithfulSMul R ℂ]
   [CommRing S] [CommRing T] {r : R →+* S}
   {Γ : Subgroup (GL (Fin 2) ℝ)} [Γ.le_SL2Z] [Γ.IsArithmetic] {k : ℤ}
 
-/-- Coefficient mapping commutes with formal differentiation. -/
-theorem map_derivative (s : S →+* T) (F : S⟦X⟧) :
-    PowerSeries.map s F.derivative = (PowerSeries.map s F).derivative := by
-  ext n
-  simp [PowerSeries.coeff_derivative]
-
-/-- The integral `E₂` series is compatible with every ring homomorphism. -/
-theorem map_e2Fourier (s : S →+* T) :
-    PowerSeries.map s (ModularFormOver.e2Fourier S) = ModularFormOver.e2Fourier T := by
-  ext n
-  simp only [ModularFormOver.e2Fourier, PowerSeries.coeff_map, PowerSeries.coeff_mk]
-  split_ifs <;> simp [map_ofNat]
-
-theorem map_e2FourierAt (s : S →+* T) :
-    PowerSeries.map s (ModularFormOver.e2FourierAt Γ S) =
-      ModularFormOver.e2FourierAt Γ T := by
-  simp only [ModularFormOver.e2FourierAt, PowerSeries.map_expand, map_e2Fourier]
-
 /-- The scaled Serre derivative formula on formal series over an arbitrary target ring. -/
 def normalizedSerreFourier (Γ : Subgroup (GL (Fin 2) ℝ)) [Γ.le_SL2Z] [Γ.IsArithmetic]
     (k : ℤ) (F : S⟦X⟧) : S⟦X⟧ :=
@@ -47,8 +33,8 @@ def normalizedSerreFourier (Γ : Subgroup (GL (Fin 2) ℝ)) [Γ.le_SL2Z] [Γ.IsA
 theorem map_normalizedSerreFourier (s : S →+* T) (F : S⟦X⟧) :
     PowerSeries.map s (normalizedSerreFourier Γ k F) =
       normalizedSerreFourier Γ k (PowerSeries.map s F) := by
-  simp [normalizedSerreFourier, PowerSeries.smul_eq_C_mul, map_derivative,
-    map_e2FourierAt, map_ofNat]
+  simp [normalizedSerreFourier, PowerSeries.smul_eq_C_mul, PowerSeries.map_derivative,
+    ModularFormOver.map_e2FourierAt, map_ofNat]
 
 /-- The normalized Serre derivative of a reduced form, defined directly on its Fourier series. -/
 @[simps]
