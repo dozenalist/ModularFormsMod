@@ -14,7 +14,6 @@ import ModularFormsMod.ModularFormMod.Derivative
 import ModularFormsMod.ModularFormMod.Del
 import ModularFormsMod.ModularFormMod.Operators
 import ModularFormsMod.ModularFormMod.Hecke
-import ModularFormsMod.ModularFormMod.Examples
 import ModularFormsMod.ModularFormMod.ZMod.Basic
 import ModularFormsMod.ModularFormMod.ZMod.Polynomial
 import ModularFormsMod.ModularFormMod.ZMod.SquarefreeAbar
