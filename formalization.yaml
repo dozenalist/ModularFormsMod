@@ -4,14 +4,15 @@ project:
   name: "Ramanujan congruences for the partition function"
   description: >-
     A Lean formalization of modular forms over coefficient subrings of the
-    complex numbers and their reductions, applied to the ordinary partition
-    function. The recorded results prove Ramanujan's congruences modulo 5, 7,
-    and 11 and the Ahlgren–Boylan theorem that, for every prime p at least 13,
-    no shift gives a congruence modulo p on an entire progression of step p.
+    complex numbers, their coefficientwise reductions modulo ring homomorphisms, 
+    and a proof classifying the Ramanujan congruences for the partition function
+    following an argument from Ahlgren and Boylan. 
+    The recorded results prove Ramanujan's congruences modulo 5, 7, and 11 
+    as well as the fact there there are no other such examples.
     The proof develops modular forms modulo a prime, filtration, and theta
     and U operators, using the arguments of Ahlgren–Boylan, Kiming–Olsson,
-    and Swinnerton-Dyer. The partition function counts unordered partitions
-    on nonnegative integers and is extended by zero to negative integers.
+    and Swinnerton-Dyer.
+
   authors:
     - "Carter Hastings"
   license: "Apache-2.0"
