@@ -374,7 +374,7 @@ theorem isOver_smul [Γ.IsArithmetic] {α} [CommSemiring α] [Algebra α R]
 end ModularForm
 
 
-/-- A weight-`k` modular form for `Γ` whose Fourier expansion comes from `R`⟦X⟧. -/
+/-- A weight-`k` modular form for `Γ` whose Fourier expansion comes from `R⟦X⟧`. -/
 structure ModularFormOver (R : Type) [CommRing R] [Algebra R ℂ]
   (Γ : outParam <| Subgroup (GL (Fin 2) ℝ)) (k : outParam ℤ)
     extends ModularForm Γ k where
