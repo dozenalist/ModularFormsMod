@@ -46,8 +46,7 @@ A Lean 4 formalization of modular forms with coefficients over subrings of `ℂ`
 | --- | --- |
 | `RamanujanCongruence_iff_delta` | If `ℓ ≥ 5` is prime, there is a Ramanujan congruence for `ℓ` if and only if there is a Ramanujan congruence for `ℓ` with `δ = (ℓ² - 1) / 24` (Theorem 1 of [K-Ol])\
 | `not_RamanujanCongruence` | For primes `ℓ ≥ 13`, there does not exist a Ramanujan congruence for `ℓ` (Theorem 1 of [Ah-Bo])
-| `RamanujanCongruence_5_verbose`, `RamanujanCongruence_7_verbose`, `RamanujanCongruence_11_verbose` | For all integers `n`, 
-`p(5n + 4) ≡ 0 (mod 5)`, `p(7n + 5) ≡ 0 (mod 7)`, and `p(11n + 6) ≡ 0 (mod 11)` |
+| `RamanujanCongruence_5_verbose`, `RamanujanCongruence_7_verbose`, `RamanujanCongruence_11_verbose` | For all integers `n`, `p(5n + 4) ≡ 0 (mod 5)`, `p(7n + 5) ≡ 0 (mod 7)`, and `p(11n + 6) ≡ 0 (mod 11)` |
 
 
 ## Attribution
