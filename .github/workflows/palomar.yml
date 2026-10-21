@@ -19,7 +19,20 @@ jobs:
         run: |
           python3 -m pip install PyYAML==6.0.2
           sudo apt-get update
-          sudo apt-get install -y bubblewrap
+          sudo apt-get install -y bubblewrap apparmor
+      - name: Enable and test Comparator namespace sandbox
+        run: |
+          # Ubuntu restricts unprivileged user namespaces. Grant bwrap the
+          # namespace permission through its own AppArmor profile.
+          sudo tee /etc/apparmor.d/palomar-bwrap >/dev/null <<'PROFILE'
+          abi <abi/4.0>,
+          include <tunables/global>
+          /usr/bin/bwrap flags=(unconfined) {
+            userns,
+          }
+          PROFILE
+          sudo apparmor_parser -r /etc/apparmor.d/palomar-bwrap
+          bwrap --unshare-all --die-with-parent --ro-bind / / --proc /proc --dev /dev /usr/bin/true
       - name: Check submitted sources and metadata
         run: python3 scripts/check-palomar.py
       - uses: leanprover/lean-action@v1
