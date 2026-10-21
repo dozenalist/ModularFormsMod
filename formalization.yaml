@@ -30,7 +30,7 @@ sources:
     note: >-
       Theorem 1 supplies the nonexistence result for primes at least 13.
       The three classical Ramanujan congruences are also stated in this paper;
-      here they are proved using the modular-form filtration infrastructure.
+      they follow as quick corollaries of the developed theory/
   - title: "Congruences like Ramanujan's for powers of the partition function"
     authors: ["Ian Kiming", "J. B. Olsson"]
     type: paper
@@ -53,7 +53,7 @@ related_formalizations:
   - id: "https://github.com/dozenalist/Partitions-mod-p/tree/b2694ff21a05e49677fe8dc5e71a17a8c79fb9c3"
     relationship: adapts
     note: >-
-      Carter Hastings's earlier manual formalization of the Ahlgren–Boylan
+      The author's earlier manual formalization of the Ahlgren–Boylan
       argument and modular forms modulo a prime. This repository reworks that
       development with Mathlib and greater generality, as described in README.
   - id: "https://github.com/dozenalist/LeanModularForms/tree/f737ca88e0887ecbaad3510b30e37042c243fd17"
