@@ -4,7 +4,7 @@ A Lean 4 formalization of modular forms with coefficients over subrings of `ℂ`
 
 ## Modular forms over coefficient rings
 
-[`ModularFormOver`](ModularFormsMod/ModularFormOver) provides definitions for modular forms whose q-expansion coefficients lie in a commutative ring `R` embedded in `ℂ`, and provides nice lifts between such modular forms. It defines the Eisenstein series `E₄` and `E₆` as well as the modular discriminant `Δ` as modular forms over `ℤ`. It defines general Eisenstein series `Eis k` as modular forms over `ℚ`. For a prime `ℓ ≥ 5`, it defines `E_{ℓ-1}` and `E_{ℓ+1}` as modular forms over `ℤ(ℓ)`, the localization of `ℤ` at `ℓ`. It proves facts about bases for the space of modular forms over `SL(2, ℤ)`, and provides infrastructure for lifting operators on modular forms (such as hecke operators and the serrre derivative) to modular forms over coefficient rings.
+[`ModularFormOver`](ModularFormsMod/ModularFormOver) provides definitions for modular forms whose q-expansion coefficients lie in a commutative ring `R` embedded in `ℂ`, and provides nice lifts between such modular forms. It defines the Eisenstein series `E₄` and `E₆` as well as the modular discriminant `Δ` as modular forms over `ℤ`. It defines general Eisenstein series `Eis k` as modular forms over `ℚ`. For a prime `ℓ ≥ 5`, it defines `E_{ℓ-1}` and `E_{ℓ+1}` as modular forms over `ℤ(ℓ)`, the localization of `ℤ` at `ℓ`. It proves facts about bases for the space of modular forms over `SL(2, ℤ)`, and provides infrastructure for lifting operators on modular forms to operators on modular forms over coefficient rings.
 
 | Lean declaration | Statement |
 | --- | --- |
@@ -12,24 +12,27 @@ A Lean 4 formalization of modular forms with coefficients over subrings of `ℂ`
 | `ModularFormOver R Γ k` | Modular forms of level `Γ` and weight `k` that lie over `R` |
 | `Basis.G` | The normalized, upper triangular collection `{E₄ ^ a * E₆ ^ b * Δ ^ c }` indexed by the power of `Δ`, which forms a basis for the space of modular forms for    the full modular group over any subring of `ℂ` |
 | `Basis.P` | The collection `{E₄ ^ a * E₆ ^ b}`, which forms a basis for the space of modular forms for the full modular group over any ring in which `6` is invertible |
-
-
-- **Definitions.** `ModularForm.isOver R f` expresses the coefficient condition, and `ModularFormOver R Γ k` bundles a form of weight `k` with that condition. The theory includes arithmetic, extension of coefficient rings, graded ring operations, and determination of forms by their Fourier coefficients. See [Defs](ModularFormsMod/ModularFormOver/Defs.lean) and [Basic](ModularFormsMod/ModularFormOver/Basic.lean).
-- **Eisenstein series and the discriminant.** The forms `E₄`, `E₆`, and `Δ` are constructed over `ℤ`, with `1728 Δ = E₄³ - E₆²`. The development also treats rational Eisenstein series and the series of weights `ℓ - 1` and `ℓ + 1` over the local integers `ℤ(ℓ)`. See [Int](ModularFormsMod/ModularFormOver/Int.lean), [Rat](ModularFormsMod/ModularFormOver/Rat.lean), and [PInteger](ModularFormsMod/ModularFormOver/PInteger.lean).
-- **Level-one structure.** Monomials in `E₄`, `E₆`, and `Δ` give bases, dimension formulas, and a Sturm bound. When `6` is invertible in `R`, the graded algebra is the polynomial algebra `R[E₄, E₆]`, with generator weights four and six. See [Basis](ModularFormsMod/ModularFormOver/Basis.lean) and [GradedRing](ModularFormsMod/ModularFormOver/GradedRing.lean).
-- **Operators.** A normalized Serre derivative preserves coefficient rings without inverting `12` or the cusp width. The Hecke theory treats operators on `Γ₁(N)` preserving the trivial-character forms and their coefficient rings. See [Derivative](ModularFormsMod/ModularFormOver/Derivative.lean) and [Hecke](ModularFormsMod/ModularFormOver/Hecke.lean).
+| `normalizedSerreDerivative` | The normalized Serre derivative acts as an operator on modular forms over any coefficient ring, taking weight `k` to weight `k + 2`
+| `T_p`, `T_n` | The hecke operator `T_p` for `p` prime acts on modular forms over rings in which `p` is invertible, and the hecke opertor `T_n` acts on modular forms over `ℚ`
 
 ## Reductions modulo ring homomorphisms
 
-[`ModularFormMod`](ModularFormsMod/ModularFormMod) works with an arbitrary coefficient homomorphism `r : R →+* S`. A term of `ModularFormMod r Γ k` is a power series over `S` that lifts to the Fourier expansion of a weight-`k` form over `R`.
+[`ModularFormMod`](ModularFormsMod/ModularFormMod) defines the reductions of modular forms over subrings `R` modulo ring homomorphisms `r : R → S`. It defines the filtration ofa modular form mod `r`. It defines maps between reductions, and relates the kernel of the reduction map to the algebra of modular forms mod `r`. Information about operators and bases carries over from the previous section.
 
-- **Reduction and base change.** The reduction map, coefficientwise congruences, composition of reductions, and congruence kernels are developed for general coefficient maps. At level one, integral bases give congruence Sturm bounds; surjective reductions give bases over `S` and a tensor-product description by base change. Reduced forms also carry scalars from the effective coefficient ring `R / ker r`. See [Defs](ModularFormsMod/ModularFormMod/Defs.lean), [Kernel](ModularFormsMod/ModularFormMod/Kernel.lean), [Basis](ModularFormsMod/ModularFormMod/Basis.lean), [BaseChange](ModularFormsMod/ModularFormMod/BaseChange.lean), and [Quotient](ModularFormsMod/ModularFormMod/Quotient.lean).
-- **Graded and Fourier algebras.** For surjective `r` with `6` invertible in `R`, the level-one graded algebra is polynomial in the reduced `E₄` and `E₆`. Summing Fourier expansions across weights gives `rAlgebra`; the kernel is the Hasse ideal, which records relations between different weights. See [GradedRing](ModularFormsMod/ModularFormMod/GradedRing.lean), [RAlgebra](ModularFormsMod/ModularFormMod/RAlgebra.lean), and [HasseIdeal](ModularFormsMod/ModularFormMod/HasseIdeal.lean).
-- **Filtration and operators.** `hasWeight` records the weights in which an expansion admits a lift; filtration is the least such weight for a nonzero form. The normalized Serre derivative descends through reduction, and a general criterion for descending linear operators is applied to Hecke operators. See [Filtration](ModularFormsMod/ModularFormMod/Filtration.lean), [Derivative](ModularFormsMod/ModularFormMod/Derivative.lean), [Operators](ModularFormsMod/ModularFormMod/Operators.lean), and [Hecke](ModularFormsMod/ModularFormMod/Hecke.lean).
+| Lean declaration | Statement |
+| --- | --- |
+| `ModularFormMod r Γ k` | The space of reductions of q-expansions of `ModularFormOver R Γ k`, given that `r : R →+* S` |
+| `rAlgebraEquivQuotient` | The algebra of modular forms mod `r` is isomorphic to the algebra of modular forms over `r` modded out by the kernel of the reduction map `ModularFormOver R Γ → ModularFormMod r Γ` |
+| `rAlgebra_eq ` | For level one, the algebra of modular forms mod `r` is equal to the range of the evaluation map `R[X,Y] → ModularFormMod r Γ` obtained by plugging in the reduced `E₄, E₆` series.
 
 ### Reductions modulo a prime
 
-[`ModularFormMod/ZMod`](ModularFormsMod/ModularFormMod/ZMod) specializes the theory to the reduction from mod a prime `ℓ`  `ℤ(ℓ) → ZMod ℓ`. Following [SwD], it proves that at level one modulo a prime `ℓ ≥ 5`:
+[`ModularFormMod/ZMod`](ModularFormsMod/ModularFormMod/ZMod) specializes the theory to the reduction mod a prime `ℓ`  `ℤ(ℓ) → ZMod ℓ`. Following [SwD], it defines the `Θ` and `U` operators on modular forms mod `ℓ`, classifies the structure of modular forms mod `ℓ`, and proves facts about the filtration.
+
+| Lean declaration | Statement |
+| --- | --- |
+| `Reduce_Esubone`, `Reduce_Eaddone` | The Eisenstein series `E_{ℓ-1}` and `E_{ℓ+1}` reduce to the constant series `1` and the formal `E₂` series, respectively |
+
 
 - The Eisenstein series `E_{ℓ-1}` and `E_{ℓ+1}` reduce to the constant series `1` and the formal `E₂` series, respectively.
 - Their polynomial representatives `Abar` and `Bbar` satisfy differential identities; `Abar` is squarefree, and `Abar` and `Bbar` are relatively prime.
