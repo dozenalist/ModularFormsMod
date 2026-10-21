@@ -11,30 +11,25 @@ permissions:
 
 jobs:
   verify:
-    runs-on: ubuntu-latest
-    timeout-minutes: 120
+    name: Check submitted sources and metadata
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
-      - name: Install preflight and sandbox dependencies
-        run: |
-          python3 -m pip install PyYAML==6.0.2
-          sudo apt-get update
-          sudo apt-get install -y bubblewrap apparmor
-      - name: Enable and test Comparator namespace sandbox
-        run: |
-          # Ubuntu restricts unprivileged user namespaces. Grant bwrap the
-          # namespace permission through its own AppArmor profile.
-          sudo tee /etc/apparmor.d/palomar-bwrap >/dev/null <<'PROFILE'
-          abi <abi/4.0>,
-          include <tunables/global>
-          /usr/bin/bwrap flags=(unconfined) {
-            userns,
-          }
-          PROFILE
-          sudo apparmor_parser -r /etc/apparmor.d/palomar-bwrap
-          bwrap --unshare-all --die-with-parent --ro-bind / / --proc /proc --dev /dev /usr/bin/true
+      - name: Install preflight dependency
+        run: python3 -m pip install PyYAML==6.0.2
       - name: Check submitted sources and metadata
         run: python3 scripts/check-palomar.py
-      - uses: leanprover/lean-action@v1
-      - name: Verify with Comparator and independent kernels
-        run: bash scripts/verify-comparator.sh
+
+  palomar-preflight:
+    name: Palomar mechanical preflight
+    needs: verify
+    uses: PalomarRegistry/PalomarSubmission/.github/workflows/submission.yml@7a08c1da8e0558d330b9b3c244896c175d373303
+    with:
+      repository: ${{ github.repository }}
+      commit: ${{ github.sha }}
+      pipeline_commit: 7a08c1da8e0558d330b9b3c244896c175d373303
+      request_id: preflight001
+      mode: full
+      # Use the public GitHub-hosted profile rather than Palomar's private runners.
+      execution_profile: palomar-standard-v1
+      options: '{"comparator_config_path":"comparator.json","authorization_relationship":"I am a responsible author or maintainer"}'

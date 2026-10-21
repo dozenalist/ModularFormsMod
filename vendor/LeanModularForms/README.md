@@ -14,8 +14,10 @@ imports to `public import`, and uses `@[expose] public section` to preserve the
 existing public declarations and definition bodies. Its declarative Lakefile
 uses the same Mathlib commit as the parent project. Any further compatibility
 changes are recorded in this directory's Git history.
-Its build directory is inside the parent project's `.lake` directory so that
-Comparator can rebuild it with the source checkout mounted read-only.
+Its build directory is inside the parent project's `.lake/build` directory so
+that both Comparator and Palomar can rebuild it with the source checkout mounted
+read-only. Palomar grants writes only to each package's `.lake/build` and
+`.lake/config` directories; other locations directly under `.lake` are read-only.
 
 The helpers `HeckeRing.mul_mem_delta`, `diamondOpCuspAux`, and
 `natDiagDetNeZero` are made public because exposed definitions or public

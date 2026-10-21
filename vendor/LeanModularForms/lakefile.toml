@@ -1,7 +1,7 @@
 name = "LeanModularForms"
 version = "0.1.0"
-# Comparator grants write access to the parent project's .lake directory.
-buildDir = "../../.lake/LeanModularForms"
+# Both Comparator and Palomar permit writes under the parent project's .lake/build.
+buildDir = "../../.lake/build/LeanModularForms"
 
 [leanOptions]
 pp.unicode.fun = true

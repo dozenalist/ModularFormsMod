@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 import re
 import sys
+import tomllib
 
 import yaml
 
@@ -118,6 +119,15 @@ def main():
             require(target.is_relative_to(ROOT), "Path dependency escapes checkout")
             require((target / "lake-manifest.json").is_file(),
                     "Contained dependency must commit its manifest")
+            config_path = target / package["configFile"]
+            require(config_path.suffix == ".toml",
+                    "Check the build directory of non-TOML path dependencies manually")
+            package_config = tomllib.loads(config_path.read_text(encoding="utf-8"))
+            build_dir = (target / package_config.get("buildDir", ".lake/build")).resolve()
+            writable = [ROOT / ".lake/build", target / ".lake/build"]
+            require(any(build_dir.is_relative_to(directory) for directory in writable),
+                    f"Path dependency {package['name']} builds outside Palomar's "
+                    "writable .lake/build directories")
         else:
             raise ValueError(f"Unsupported dependency: {package['name']}")
 

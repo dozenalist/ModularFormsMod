@@ -64,7 +64,7 @@ The root project follows the [Palomar submission requirements](https://palomar-r
 its only project-specific definition is `partition`, and it states exactly
 `not_RamanujanCongruence_verbose`, `RamanujanCongruence_5_verbose`,
 `RamanujanCongruence_7_verbose`, and `RamanujanCongruence_11_verbose`.
-[Solution.lean](Solution.lean) publicly imports the original proofs from
+[Solution.lean](Solution.lean) imports the original proofs from
 [MainResults.lean](ModularFormsMod/RamanujanCongruence/MainResults.lean).
 Challenge and Solution are separate environments and must not import each other.
 
@@ -95,7 +95,7 @@ human peer review or source-author endorsement is asserted.
 To check a checkout using its pinned toolchain:
 
 ```sh
-python3 -m pip install PyYAML==6.0.2
+python3 -m pip install PyYAML==6.0.2 # Python 3.11 or later
 python3 scripts/check-palomar.py
 lake exe cache get
 lake build
@@ -104,9 +104,15 @@ bash scripts/verify-comparator.sh
 
 The last command requires Linux and `bubblewrap` (`bwrap`). It runs the
 toolchain's `lake comparator`, including its bundled NanoDa and con-ron
-independent kernels. The [Palomar verification workflow](.github/workflows/palomar.yml)
-runs these checks on the `Palomar` branch. Lean's four intentional Challenge
-`sorry` warnings are expected; they do not constitute missing Solution proofs.
+independent kernels. These local checks use Comparator's sandbox. The
+[Palomar verification workflow](.github/workflows/palomar.yml) also runs Palomar's
+official reusable verifier, pinned to an exact revision, on the `Palomar` branch.
+It builds from fresh Lake state under Palomar's stricter read-only source policy
+and publishes a mechanical report as a GitHub Actions artifact. The vendored
+dependency writes its output under the root `.lake/build`, which both sandboxes
+allow. Lean's four intentional Challenge `sorry` warnings are expected; they do
+not constitute missing Solution proofs. This mechanical preflight does not
+submit, review, or register the project with Palomar.
 
 After the checks pass, submit `dozenalist/ModularFormsMod` and the full
 40-character SHA returned by `git rev-parse HEAD` for the pushed `Palomar`
