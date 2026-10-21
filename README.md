@@ -13,7 +13,7 @@ A Lean 4 formalization of modular forms with coefficients over subrings of `ℂ`
 | `Basis.G` | The normalized, upper triangular collection `{E₄ ^ a * E₆ ^ b * Δ ^ c }` indexed by the power of `Δ`, which forms a basis for the space of modular forms for    the full modular group over any subring of `ℂ` |
 | `Basis.P` | The collection `{E₄ ^ a * E₆ ^ b}`, which forms a basis for the space of modular forms for the full modular group over any ring in which `6` is invertible |
 | `normalizedSerreDerivative` | The normalized Serre derivative acts as an operator on modular forms over any coefficient ring, taking weight `k` to weight `k + 2`
-| `T_p`, `T_n` | The hecke operator `T_p` for `p` prime acts on modular forms over rings in which `p` is invertible, and the hecke opertor `T_n` acts on modular forms over `ℚ`
+| `T_p`, `T_n` | The hecke operators `T_p` for `p` prime act on modular forms over rings in which `p` is invertible, and the hecke operators `T_n` act on modular forms over `ℚ`
 
 ## Reductions modulo ring homomorphisms
 
