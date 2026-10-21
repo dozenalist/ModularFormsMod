@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.EventuallyEq
-import Mathlib.RingTheory.PowerSeries.Order
+module
+
+public import ModularFormsMod.EventuallyEq
+public import Mathlib.RingTheory.PowerSeries.Order
 
 /-!
 # Finite products for the modular discriminant
@@ -14,6 +16,8 @@ import Mathlib.RingTheory.PowerSeries.Order
 Its coefficients commute with ring homomorphisms and stabilize as `m` grows.
 The final theorem expresses this stabilization using `PowerSeries.eventuallyEq`.
 -/
+
+@[expose] public section
 
 
 noncomputable section ProductDefs

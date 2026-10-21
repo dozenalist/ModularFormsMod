@@ -4,11 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.ModularFormOver.Basis
-import Mathlib.Algebra.DirectSum.Algebra
-import Mathlib.LinearAlgebra.Finsupp.VectorSpace
-import Mathlib.RingTheory.MvPolynomial.Basic
-import Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous
+module
+
+public import ModularFormsMod.ModularFormOver.Basis
+public import Mathlib.Algebra.DirectSum.Algebra
+public import Mathlib.LinearAlgebra.Finsupp.VectorSpace
+public import Mathlib.RingTheory.MvPolynomial.Basic
+public import Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous
 
 /-!
 # The polynomial presentation of level-one modular forms
@@ -18,6 +20,8 @@ ring is a polynomial algebra in `E₄` and `E₆`, of weights four and six.
 Its weight-`k` piece corresponds to the weighted homogeneous polynomials of degree `k`.
 The linear map `toPolynomial` gives the polynomial representing a form of a fixed weight.
 -/
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 set_option backward.defeqAttrib.useBackward true

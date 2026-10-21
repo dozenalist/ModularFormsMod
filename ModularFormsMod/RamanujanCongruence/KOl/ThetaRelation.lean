@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.RamanujanCongruence.KOl.WeightDecomposition
-import ModularFormsMod.RamanujanCongruence.KOl.Reduction
-import Mathlib.Algebra.Ring.GeomSum
+module
+
+public import ModularFormsMod.RamanujanCongruence.KOl.WeightDecomposition
+public import ModularFormsMod.RamanujanCongruence.KOl.Reduction
+public import Mathlib.Algebra.Ring.GeomSum
 
 /-!
 # The theta relation forced by a nonzero simple congruence
@@ -14,6 +16,8 @@ import Mathlib.Algebra.Ring.GeomSum
 The specialization of Kiming--Olsson, Proposition 3, needed here: the terms of
 weights `k + (p + 1)` and `k + ((p + 1) / 2) * (p + 1)` cancel each other.
 -/
+
+@[expose] public section
 
 noncomputable section
 

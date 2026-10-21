@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import Mathlib.NumberTheory.Bernoulli
+module
+
+public import Mathlib.NumberTheory.Bernoulli
 
 /-!
 # Bernoulli coefficients at weight `p - 1`
@@ -13,6 +15,8 @@ Mathlib's von Staudt–Clausen valuation formula shows that the Eisenstein
 coefficient factor at weight `p - 1` has positive p-adic valuation for `p ≥ 5`.
 The factor is also p-integral at the two smaller primes.
 -/
+
+@[expose] public section
 
 /-- The Eisenstein coefficient factor at weight `p - 1` has positive p-adic valuation
 for primes at least five. -/

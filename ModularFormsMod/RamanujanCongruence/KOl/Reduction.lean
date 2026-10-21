@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.RamanujanCongruence.Basic
+module
+
+public import ModularFormsMod.RamanujanCongruence.Basic
 
 /-!
 # From a partition congruence to a simple congruence of `fl p`
@@ -13,6 +15,8 @@ The standard-partition specialization of the reduction in Section 4 of
 Kiming--Olsson. Multiplication by a `p`-th power preserves a simple congruence,
 and the Euler product shifts its residue from `-β` to `δ p - β`.
 -/
+
+@[expose] public section
 
 noncomputable section
 

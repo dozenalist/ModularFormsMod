@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import Lean.Elab.Tactic.Simproc
-import Lean.Meta.Reduce
-import Mathlib.LinearAlgebra.Dimension.OrzechProperty
-import ModularFormsMod.ModularFormOver.Rat
+module
+
+public import Lean.Elab.Tactic.Simproc
+public import Lean.Meta.Reduce
+public import Mathlib.LinearAlgebra.Dimension.OrzechProperty
+public import ModularFormsMod.ModularFormOver.Rat
 
 /-!
 # Bases and the Sturm bound for level-one modular forms
@@ -20,6 +22,8 @@ and the rank and finrank formulas.
 When `6` is invertible in the coefficient ring, monomials `P` in `E₄` and `E₆`
 alone form the alternative basis `PBasis`.
 -/
+
+@[expose] public section
 
 open ModularForm MatrixGroups UpperHalfPlane ModularFormOver PowerSeries
 

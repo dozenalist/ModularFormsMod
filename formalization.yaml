@@ -1,0 +1,135 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+version: "v0.4"
+project:
+  name: "Ramanujan congruences for the partition function"
+  description: >-
+    A Lean formalization of modular forms over coefficient subrings of the
+    complex numbers and their reductions, applied to the ordinary partition
+    function. The recorded results prove Ramanujan's congruences modulo 5, 7,
+    and 11 and the Ahlgren–Boylan theorem that, for every prime p at least 13,
+    no shift gives a congruence modulo p on an entire progression of step p.
+    The proof develops modular forms modulo a prime, filtration, and theta
+    and U operators, using the arguments of Ahlgren–Boylan, Kiming–Olsson,
+    and Swinnerton-Dyer. The partition function counts unordered partitions
+    on nonnegative integers and is extended by zero to negative integers.
+  authors:
+    - "Carter Hastings"
+  license: "Apache-2.0"
+  responsible_maintainers:
+    - "Carter Hastings"
+classification:
+  arxiv: ["math.NT", "math.CO"]
+  msc2020: ["11P83", "11F33", "05A17"]
+sources:
+  - title: "Arithmetic properties of the partition function"
+    authors: ["Scott Ahlgren", "Matthew Boylan"]
+    type: paper
+    id: "doi:10.1007/s00222-003-0295-6"
+    location: "Inventiones Mathematicae 153 (2003), 487–502; https://people.math.sc.edu/boylan/reprints/nomoreramafinal.pdf"
+    relationship: formalizes
+    note: >-
+      Theorem 1 supplies the nonexistence result for primes at least 13.
+      The three classical Ramanujan congruences are also stated in this paper;
+      here they are proved using the modular-form filtration infrastructure.
+  - title: "Congruences like Ramanujan's for powers of the partition function"
+    authors: ["Ian Kiming", "J. B. Olsson"]
+    type: paper
+    location: "Archiv der Mathematik 59 (1992), 348–360; https://web.math.ku.dk/~kiming/papers.html"
+    relationship: adapts
+    note: >-
+      The theta-cycle argument and congruence-shift criterion are specialized
+      to the ordinary partition function. The general power-of-partition
+      results of the paper are not claimed.
+  - title: "On l-adic representations and congruences for coefficients of modular forms"
+    authors: ["H. P. F. Swinnerton-Dyer"]
+    type: paper
+    location: "Modular Functions of One Variable III, Lecture Notes in Mathematics 350, Springer (1973), 1–55"
+    relationship: adapts
+    note: >-
+      Supplies the structure of modular forms modulo a prime and filtration
+      arguments used in the proof infrastructure. No formalization of the
+      paper's general Galois representation theory is claimed.
+related_formalizations:
+  - id: "https://github.com/dozenalist/Partitions-mod-p/tree/b2694ff21a05e49677fe8dc5e71a17a8c79fb9c3"
+    relationship: adapts
+    note: >-
+      Carter Hastings's earlier manual formalization of the Ahlgren–Boylan
+      argument and modular forms modulo a prime. This repository reworks that
+      development with Mathlib and greater generality, as described in README.
+  - id: "https://github.com/dozenalist/LeanModularForms/tree/f737ca88e0887ecbaad3510b30e37042c243fd17"
+    relationship: builds-on
+    note: >-
+      Fork of Chris Birkbeck's LeanModularForms. The needed Hecke infrastructure
+      is retained as a contained module-compatible package, with provenance
+      and local adaptations documented in vendor/LeanModularForms/README.md.
+status:
+  scope: >-
+    Comparator selects precisely not_RamanujanCongruence_verbose,
+    RamanujanCongruence_5_verbose, RamanujanCongruence_7_verbose, and
+    RamanujanCongruence_11_verbose from MainResults. The sole project-specific
+    definition on the statement surface is partition, whose concrete body is
+    checked transitively. All progression parameters and shifts are integers.
+    Nonexistence is asserted only for primes at least 13, with progression
+    step equal to the modulus. Prime powers, other steps, and the cases of
+    primes 2 and 3 are outside the selected statements.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: ["propext", "Classical.choice", "Quot.sound"]
+automation:
+  methods:
+    - method: manual
+      tool_setup: >-
+        The author wrote the earlier project without AI, and wrote
+        ModularFormOver/Defs.lean and ModularFormOver/Basic.lean manually.
+        The author supplied the main definitions and theorem statements.
+    - method: agent
+      framework: "Codex"
+      tool_setup: >-
+        AI-assisted proof completion, reusing the earlier formalization, and
+        generation of documentation. Codex also prepared the Palomar packaging
+        and module migration using GPT-6. Historical proof-development model
+        versions were not recorded.
+      prompting_notes: >-
+        The author first formalized definitions and statements, then prompted
+        Codex to complete proofs, drawing on the earlier manual project.
+  notes: >-
+    The README Attribution section is the author's production account.
+    AI tools are credited here; human authorship and responsibility remain
+    with Carter Hastings. Costs and total elapsed effort were not tracked.
+fidelity:
+  divergences: >-
+    The ordinary partition function is extended by zero to negative integers,
+    with value one at zero. The exclusion theorem uses the progression
+    p*n-beta for arbitrary integer beta, equivalent to arbitrary residue
+    shifts. Kiming–Olsson is specialized to the ordinary partition function.
+    No mathematical novelty or coverage of the full cited papers is claimed.
+review:
+  status: "self-assessed"
+  reviewers: []
+  notes: >-
+    The source contains axiom inspections for the four selected theorems.
+    Submission preparation checks the statement surface, builds, and axiom
+    dependencies. No independent human peer review or source-author
+    endorsement is asserted. Palomar's review has not yet taken place.
+alignment:
+  statements:
+    - source: "Ahlgren–Boylan, Theorem 1 (nonexistence for primes at least 13)"
+      lean: "not_RamanujanCongruence_verbose"
+      module: "ModularFormsMod.RamanujanCongruence.MainResults"
+      status: proved
+    - source: "Classical Ramanujan congruence modulo 5, recalled by Ahlgren–Boylan"
+      lean: "RamanujanCongruence_5_verbose"
+      module: "ModularFormsMod.RamanujanCongruence.MainResults"
+      status: proved
+    - source: "Classical Ramanujan congruence modulo 7, recalled by Ahlgren–Boylan"
+      lean: "RamanujanCongruence_7_verbose"
+      module: "ModularFormsMod.RamanujanCongruence.MainResults"
+      status: proved
+    - source: "Classical Ramanujan congruence modulo 11, recalled by Ahlgren–Boylan"
+      lean: "RamanujanCongruence_11_verbose"
+      module: "ModularFormsMod.RamanujanCongruence.MainResults"
+      status: proved
+acknowledgements: >-
+  Mathlib and Lean contributors; Chris Birkbeck and the LeanModularForms
+  contributors; the authors of the cited mathematical sources; and Codex
+  for AI assistance, with roles described above.

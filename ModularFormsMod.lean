@@ -4,27 +4,33 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.ModularFormOver.Defs
-import ModularFormsMod.ModularFormOver.Basic
-import ModularFormsMod.ModularFormOver.Hecke
-import ModularFormsMod.ModularFormMod.GradedRing
-import ModularFormsMod.ModularFormMod.Filtration
-import ModularFormsMod.ModularFormMod.Quotient
-import ModularFormsMod.ModularFormMod.Derivative
-import ModularFormsMod.ModularFormMod.Del
-import ModularFormsMod.ModularFormMod.Operators
-import ModularFormsMod.ModularFormMod.Hecke
-import ModularFormsMod.ModularFormMod.ZMod.Basic
-import ModularFormsMod.ModularFormMod.ZMod.Polynomial
-import ModularFormsMod.ModularFormMod.ZMod.SquarefreeAbar
-import ModularFormsMod.ModularFormMod.ZMod.CoprimeAbarBbar
-import ModularFormsMod.ModularFormMod.ZMod.HasseIdeal
-import ModularFormsMod.ModularFormMod.ZMod.Theta
-import ModularFormsMod.ModularFormMod.ZMod.Filtration
-import ModularFormsMod.ModularFormMod.ZMod.UOperator
+module
 
-import ModularFormsMod.EventuallyEq
-import ModularFormsMod.discProduct
-import ModularFormsMod.qExp_discriminant
-import ModularFormsMod.ModularForm
-import ModularFormsMod.RamanujanCongruence.MainResults
+public import ModularFormsMod.ModularFormOver.Defs
+public import ModularFormsMod.ModularFormOver.Basic
+public import ModularFormsMod.ModularFormOver.Hecke
+public import ModularFormsMod.ModularFormMod.GradedRing
+public import ModularFormsMod.ModularFormMod.Filtration
+public import ModularFormsMod.ModularFormMod.Quotient
+public import ModularFormsMod.ModularFormMod.Derivative
+public import ModularFormsMod.ModularFormMod.Del
+public import ModularFormsMod.ModularFormMod.Operators
+public import ModularFormsMod.ModularFormMod.Hecke
+public import ModularFormsMod.ModularFormMod.ZMod.Basic
+public import ModularFormsMod.ModularFormMod.ZMod.Polynomial
+public import ModularFormsMod.ModularFormMod.ZMod.SquarefreeAbar
+public import ModularFormsMod.ModularFormMod.ZMod.CoprimeAbarBbar
+public import ModularFormsMod.ModularFormMod.ZMod.HasseIdeal
+public import ModularFormsMod.ModularFormMod.ZMod.Theta
+public import ModularFormsMod.ModularFormMod.ZMod.Filtration
+public import ModularFormsMod.ModularFormMod.ZMod.UOperator
+
+public import ModularFormsMod.EventuallyEq
+public import ModularFormsMod.discProduct
+public import ModularFormsMod.qExp_discriminant
+public import ModularFormsMod.ModularForm
+public import ModularFormsMod.RamanujanCongruence.MainResults
+
+/-! Public declarations for this module. -/
+
+@[expose] public section

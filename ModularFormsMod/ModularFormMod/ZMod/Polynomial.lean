@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.ModularFormMod.Del
-import ModularFormsMod.ModularFormMod.GradedRing
-import ModularFormsMod.ModularFormMod.Derivative
-import ModularFormsMod.ModularFormMod.ZMod.Basic
+module
+
+public import ModularFormsMod.ModularFormMod.Del
+public import ModularFormsMod.ModularFormMod.GradedRing
+public import ModularFormsMod.ModularFormMod.Derivative
+public import ModularFormsMod.ModularFormMod.ZMod.Basic
 
 /-!
 # The Eisenstein polynomials modulo a large prime
@@ -16,6 +18,8 @@ The polynomials `A` and `B` represent `E_{p-1}` and `E_{p+1}` over `ℤ(p)`.
 Lemma 1.39 identifies the reductions of `Del A` and `Del B` with `Bbar` and `-X₀ Abar`.
 The proof first compares Fourier expansions, then uses injectivity in a fixed weight.
 -/
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 set_option backward.defeqAttrib.useBackward true

@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.RamanujanCongruence.AhBo.DescentArgument
-import ModularFormsMod.RamanujanCongruence.KOl.Basic
+module
+
+public import ModularFormsMod.RamanujanCongruence.AhBo.DescentArgument
+public import ModularFormsMod.RamanujanCongruence.KOl.Basic
 
 /-!
 # Main results on Ramanujan congruences
@@ -13,6 +15,8 @@ import ModularFormsMod.RamanujanCongruence.KOl.Basic
 This file collects the main results on Ramanujan congruences, proving that
 there exists a Ramanujan congruence for a prime p if and only if p = 5, 7, 11.
 -/
+
+@[expose] public section
 
 
 open ModularFormMod.ZMod RamanujanCongruence.KOl ModularFormMod

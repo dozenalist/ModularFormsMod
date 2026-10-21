@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.ModularFormMod.Defs
+module
+
+public import ModularFormsMod.ModularFormMod.Defs
 
 /-!
 # Fourier coefficients and congruences of reduced modular forms
@@ -13,6 +15,8 @@ The coefficient API identifies equality and vanishing of reductions with coeffic
 congruences. Reduction is surjective for every coefficient homomorphism and injective when
 the coefficient homomorphism is injective.
 -/
+
+@[expose] public section
 
 open PowerSeries MatrixGroups
 

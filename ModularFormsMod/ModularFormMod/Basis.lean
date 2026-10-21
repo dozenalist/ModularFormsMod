@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.ModularFormMod.Kernel
-import ModularFormsMod.ModularFormOver.Basis
-import Mathlib.LinearAlgebra.FreeModule.Finite.Basic
-import Mathlib.RingTheory.Ideal.Operations
+module
+
+public import ModularFormsMod.ModularFormMod.Kernel
+public import ModularFormsMod.ModularFormOver.Basis
+public import Mathlib.LinearAlgebra.FreeModule.Finite.Basic
+public import Mathlib.RingTheory.Ideal.Operations
 
 /-!
 # Level-one bases and congruence Sturm bounds
@@ -16,6 +18,8 @@ The triangular integral `G` basis detects congruences along every ring homomorph
 For surjective maps its reductions form a basis over the target ring. The fixed-weight
 reduction kernel is exactly the coefficient kernel times the module of original forms.
 -/
+
+@[expose] public section
 
 open PowerSeries MatrixGroups ModularFormOver.Basis
 

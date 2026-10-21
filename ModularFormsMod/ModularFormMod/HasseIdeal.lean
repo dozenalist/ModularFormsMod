@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.ModularFormMod.RAlgebra
-import ModularFormsMod.ModularFormMod.Basic
+module
+
+public import ModularFormsMod.ModularFormMod.RAlgebra
+public import ModularFormsMod.ModularFormMod.Basic
 
 /-!
 # The kernel of Fourier expansion across weights
@@ -14,6 +16,8 @@ import ModularFormsMod.ModularFormMod.Basic
 Its quotient is `rAlgebra r Γ`, and it meets every individual weight summand trivially.
 The construction applies to every surjective coefficient homomorphism.
 -/
+
+@[expose] public section
 
 open PowerSeries MatrixGroups DirectSum
 

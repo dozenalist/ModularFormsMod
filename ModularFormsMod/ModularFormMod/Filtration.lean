@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.ModularFormMod.Basic
-import ModularFormsMod.ModularFormMod.Basis
-import Mathlib.NumberTheory.ModularForms.NormTrace
+module
+
+public import ModularFormsMod.ModularFormMod.Basic
+public import ModularFormsMod.ModularFormMod.Basis
+public import Mathlib.NumberTheory.ModularForms.NormTrace
 
 /-!
 # Weights and filtration of reduced modular forms
@@ -16,6 +18,8 @@ of its bundled weight. The filtration is the least such weight for a nonzero for
 The zero form has every weight, and its filtration is zero by the convention for `sInf`
 on unbounded subsets of `ℤ`.
 -/
+
+@[expose] public section
 
 variable {R S : Type} [CommRing R] [Algebra R ℂ] [FaithfulSMul R ℂ] [CommRing S]
   {Γ : Subgroup (GL (Fin 2) ℝ)} {k j : ℤ} {r : R →+* S}

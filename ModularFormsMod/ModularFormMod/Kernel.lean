@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.ModularFormMod.Map
-import Mathlib.LinearAlgebra.Isomorphisms
-import Mathlib.Algebra.Module.Torsion.Basic
-import Mathlib.RingTheory.Ideal.Quotient.Operations
+module
+
+public import ModularFormsMod.ModularFormMod.Map
+public import Mathlib.LinearAlgebra.Isomorphisms
+public import Mathlib.Algebra.Module.Torsion.Basic
+public import Mathlib.RingTheory.Ideal.Quotient.Operations
 
 /-!
 # Fixed-weight congruence kernels
@@ -16,6 +18,8 @@ import Mathlib.RingTheory.Ideal.Quotient.Operations
 The quotient by this submodule is the module of reduced forms. Equal coefficient kernels
 give canonical linear equivalences, and reduced forms carry scalars from `R ⧸ ker r`.
 -/
+
+@[expose] public section
 
 open MatrixGroups
 

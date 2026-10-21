@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import Mathlib.NumberTheory.ModularForms.Discriminant
-import ModularFormsMod.discProduct
+module
+
+public import Mathlib.NumberTheory.ModularForms.Discriminant
+public import ModularFormsMod.discProduct
 
 /-!
 # The Fourier expansion of the modular discriminant
@@ -14,6 +16,8 @@ The Fourier coefficients of the discriminant are the stable integer coefficients
 of `discProduct`. The proof relates coefficientwise stabilization of finite formal
 products to locally uniform convergence of their analytic evaluations.
 -/
+
+@[expose] public section
 
 
 open ModularForm PowerSeries MatrixGroups UpperHalfPlane Set DirectSum Filter Function

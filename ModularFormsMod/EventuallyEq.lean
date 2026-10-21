@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import Mathlib.RingTheory.PowerSeries.Basic
+module
+
+public import Mathlib.RingTheory.PowerSeries.Basic
 
 /-!
 # Eventual agreement of power-series coefficients
@@ -13,6 +15,8 @@ import Mathlib.RingTheory.PowerSeries.Basic
 in every bounded degree. The relation is an equivalence and is preserved by
 addition, multiplication, and natural powers.
 -/
+
+@[expose] public section
 
 open PowerSeries Finset Finset.HasAntidiagonal
 

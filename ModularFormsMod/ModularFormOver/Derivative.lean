@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.ModularFormOver.Basic
-import Mathlib.NumberTheory.ModularForms.Derivative
-import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
-import Mathlib.RingTheory.PowerSeries.Expand
+module
+
+public import ModularFormsMod.ModularFormOver.Basic
+public import Mathlib.NumberTheory.ModularForms.Derivative
+public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
+public import Mathlib.RingTheory.PowerSeries.Expand
 
 /-!
 # Normalized Serre derivative over a coefficient ring
@@ -17,6 +19,8 @@ preserves arbitrary coefficient rings without inverting either 12 or the cusp wi
 In the parameter `q = exp (2 π i τ / h)`, its Fourier expansion is
 `12 X f' - k h E₂(X^h) f`. At width one this is the usual 12-scaled Serre derivative.
 -/
+
+@[expose] public section
 
 open UpperHalfPlane ModularForm
 open Real Complex

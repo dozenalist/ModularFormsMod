@@ -4,13 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.RamanujanCongruence.AhBo.FluEqZero
+module
+
+public import ModularFormsMod.RamanujanCongruence.AhBo.FluEqZero
 
 /-!
 # Theta-filtration steps used in the descent argument
 
 Positive filtration drops and the return at the end of the theta cycle.
 -/
+
+@[expose] public section
 
 open ModularFormMod ModularFormMod.ZMod
 

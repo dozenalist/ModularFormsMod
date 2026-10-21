@@ -1,7 +1,7 @@
 name = "ModularFormsMod"
 version = "0.1.0"
 keywords = ["math"]
-defaultTargets = ["ModularFormsMod"]
+defaultTargets = ["ModularFormsMod", "Challenge", "Solution"]
 
 [leanOptions]
 pp.unicode.fun = true # pretty-prints `fun a ↦ b`
@@ -11,13 +11,18 @@ maxSynthPendingDepth = 3
 
 [[require]]
 name = "LeanModularForms"
-git = "https://github.com/dozenalist/LeanModularForms.git"
-rev = "master"
+path = "vendor/LeanModularForms"
 
 [[require]]
 name = "mathlib"
 scope = "leanprover-community"
-rev = "v4.35.0-rc3"
+rev = "c55e6e786f49471c72fbddbec5415808896aec1e"
 
 [[lean_lib]]
 name = "ModularFormsMod"
+
+[[lean_lib]]
+name = "Challenge"
+
+[[lean_lib]]
+name = "Solution"

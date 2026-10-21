@@ -4,12 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.ModularFormOver.PInteger
-import ModularFormsMod.ModularFormOver.Derivative
-import ModularFormsMod.ModularFormMod.Basic
-import Mathlib.RingTheory.PowerSeries.Expand
-import Mathlib.FieldTheory.Finite.Basic
-import Mathlib.Tactic.NormNum.Prime
+module
+
+public import ModularFormsMod.ModularFormOver.PInteger
+public import ModularFormsMod.ModularFormOver.Derivative
+public import ModularFormsMod.ModularFormMod.Basic
+public import Mathlib.RingTheory.PowerSeries.Expand
+public import Mathlib.FieldTheory.Finite.Basic
+public import Mathlib.Tactic.NormNum.Prime
 
 /-!
 # Scalar multiplication on modular forms reduced modulo an integer
@@ -18,6 +20,8 @@ Every ring homomorphism to `ZMod n` is surjective, so reduced modular forms
 inherit a module structure over `ZMod n`. The Eisenstein series of weights
 `p - 1` and `p + 1` reduce to `1` and the formal `E₂` series, respectively.
 -/
+
+@[expose] public section
 
 open ModularFormOver ModularFormMod PInteger MatrixGroups
 

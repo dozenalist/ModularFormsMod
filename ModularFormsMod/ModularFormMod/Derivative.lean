@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.ModularFormMod.Map
-import ModularFormsMod.ModularFormOver.Derivative
+module
+
+public import ModularFormsMod.ModularFormMod.Map
+public import ModularFormsMod.ModularFormOver.Derivative
 
 /-!
 # The normalized Serre derivative after coefficient reduction
@@ -13,6 +15,8 @@ import ModularFormsMod.ModularFormOver.Derivative
 The integral formula `12 X F' - k h E₂(X^h) F` descends along arbitrary coefficient maps.
 It is independent of a lift and commutes with further coefficient reduction.
 -/
+
+@[expose] public section
 
 open PowerSeries MatrixGroups
 

@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.ModularFormMod.Basis
-import Mathlib.LinearAlgebra.TensorProduct.Basis
+module
+
+public import ModularFormsMod.ModularFormMod.Basis
+public import Mathlib.LinearAlgebra.TensorProduct.Basis
 
 /-!
 # Base change and independence of the lifting ring at level one
@@ -14,6 +16,8 @@ The reduced triangular basis is defined by integral Fourier series, so surjectiv
 onto the same target ring have canonically identical Fourier expansions. For a surjective
 `r : R →+* S`, scalar extension `S ⊗[R] M_k(R)` is the module of reduced forms.
 -/
+
+@[expose] public section
 
 open PowerSeries MatrixGroups ModularFormOver.Basis
 open scoped TensorProduct

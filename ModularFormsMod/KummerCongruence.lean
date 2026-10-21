@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import Mathlib.NumberTheory.Bernoulli
-import Mathlib.Data.Nat.Squarefree
+module
+
+public import Mathlib.NumberTheory.Bernoulli
+public import Mathlib.Data.Nat.Squarefree
 
 /-!
 # Kummer's congruence for Bernoulli numbers
@@ -16,6 +18,8 @@ congruence modulo `p`. These imply the nonnegative valuation of the Eisenstein
 coefficient factor at weight `p + 1`.
 
 -/
+
+@[expose] public section
 
 
 section ImportedKummer

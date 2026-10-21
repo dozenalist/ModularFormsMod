@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.ModularFormMod.BaseChange
-import ModularFormsMod.ModularFormMod.HasseIdeal
+module
+
+public import ModularFormsMod.ModularFormMod.BaseChange
+public import ModularFormsMod.ModularFormMod.HasseIdeal
 
 /-!
 # Polynomial presentation of the graded algebra of reduced level-one forms
@@ -14,6 +16,8 @@ If `r` is surjective and six is invertible in its source, reduced monomials in `
 form a basis in each weight. Consequently the full graded algebra is a polynomial algebra
 over the target ring. Its Fourier relations pull back to the kernel of Eisenstein evaluation.
 -/
+
+@[expose] public section
 
 open PowerSeries MatrixGroups ModularFormOver.Basis
 open scoped DirectSum TensorProduct

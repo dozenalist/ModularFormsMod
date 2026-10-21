@@ -4,17 +4,19 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import Mathlib.RingTheory.Localization.AtPrime.Basic
-import Mathlib.RingTheory.Localization.FractionRing
-import Mathlib.RingTheory.Ideal.NatInt
-import Mathlib.RingTheory.Int.Basic
-import Mathlib.Basic.Complex.Basic
-import Mathlib.Algebra.Field.ZMod
-import Mathlib.Algebra.GroupWithZero.Invertible
-import Mathlib.NumberTheory.Padics.PadicVal.Basic
-import Mathlib.RingTheory.Localization.Away.Basic
-import Mathlib.Algebra.Algebra.Rat
-import Mathlib.Algebra.CharP.Algebra
+module
+
+public import Mathlib.RingTheory.Localization.AtPrime.Basic
+public import Mathlib.RingTheory.Localization.FractionRing
+public import Mathlib.RingTheory.Ideal.NatInt
+public import Mathlib.RingTheory.Int.Basic
+public import Mathlib.Basic.Complex.Basic
+public import Mathlib.Algebra.Field.ZMod
+public import Mathlib.Algebra.GroupWithZero.Invertible
+public import Mathlib.NumberTheory.Padics.PadicVal.Basic
+public import Mathlib.RingTheory.Localization.Away.Basic
+public import Mathlib.Algebra.Algebra.Rat
+public import Mathlib.Algebra.CharP.Algebra
 
 /-!
 # Localizations of the integers and reduction modulo a prime
@@ -25,6 +27,8 @@ constructs embeddings into characteristic-zero fields, reduction to `ZMod p`,
 and fraction constructors. It also provides the notation `ℤ[1/z]`, its canonical
 maps, and invertibility instances used for modular forms over coefficient rings.
 -/
+
+@[expose] public section
 
 
 variable (p : ℕ) [Fact p.Prime]
@@ -262,7 +266,7 @@ section Localization.Away
 
 open PInteger
 
-private abbrev LocalℤAway (z : ℤ) : Type := Localization.Away z
+abbrev LocalℤAway (z : ℤ) : Type := Localization.Away z
 
 scoped[PInteger] notation "ℤ[1/" z:max "]" => LocalℤAway z
 

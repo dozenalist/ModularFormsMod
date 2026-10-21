@@ -4,14 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.ModularFormMod.ZMod.Polynomial
-import Mathlib.Algebra.Field.ZMod
-import Mathlib.Algebra.Polynomial.SpecificDegree
-import Mathlib.Algebra.MvPolynomial.NoZeroDivisors
-import Mathlib.Algebra.Squarefree.Basic
-import Mathlib.RingTheory.MvPolynomial.EulerIdentity
-import Mathlib.RingTheory.Polynomial.UniqueFactorization
-import Mathlib.RingTheory.UniqueFactorizationDomain.Multiplicity
+module
+
+public import ModularFormsMod.ModularFormMod.ZMod.Polynomial
+public import Mathlib.Algebra.Field.ZMod
+public import Mathlib.Algebra.Polynomial.SpecificDegree
+public import Mathlib.Algebra.MvPolynomial.NoZeroDivisors
+public import Mathlib.Algebra.Squarefree.Basic
+public import Mathlib.RingTheory.MvPolynomial.EulerIdentity
+public import Mathlib.RingTheory.Polynomial.UniqueFactorization
+public import Mathlib.RingTheory.UniqueFactorizationDomain.Multiplicity
 
 /-!
 # Squarefreeness of the Hasse polynomial
@@ -21,6 +23,8 @@ The proof uses the two differential identities of Lemma 1.39 and the bound on
 the degree of `Abar`. Euler's identity replaces the classification of weighted
 homogeneous factors in the paper's proof.
 -/
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 set_option backward.defeqAttrib.useBackward true

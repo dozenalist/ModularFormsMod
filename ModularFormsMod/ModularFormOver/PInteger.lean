@@ -4,11 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.ModularFormOver.Int
-import ModularFormsMod.PInteger
-import ModularFormsMod.ModularForm
-import ModularFormsMod.LdvdBernoulliNum
-import ModularFormsMod.KummerCongruence
+module
+
+public import ModularFormsMod.ModularFormOver.Int
+public import ModularFormsMod.PInteger
+public import ModularFormsMod.ModularForm
+public import ModularFormsMod.LdvdBernoulliNum
+public import ModularFormsMod.KummerCongruence
 
 /-!
 # Eisenstein series over the local integers
@@ -19,6 +21,8 @@ for the corresponding Bernoulli factors. This file also supplies scalar
 extension from `ℤ[1/6]` and expresses `Δ` in terms of `E₄` and `E₆` when
 `6` is invertible.
 -/
+
+@[expose] public section
 
 
 open PInteger UpperHalfPlane ModularForm ModularFormOver

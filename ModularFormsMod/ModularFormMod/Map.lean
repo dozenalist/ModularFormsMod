@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.ModularFormMod.Basic
+module
+
+public import ModularFormsMod.ModularFormMod.Basic
 
 /-!
 # Composition of coefficient reductions
@@ -12,6 +14,8 @@ import ModularFormsMod.ModularFormMod.Basic
 `ModularFormMod.map s` maps coefficients along `s`, keeping the original lifting ring.
 It is always surjective, and is an equivalence when `s` is injective.
 -/
+
+@[expose] public section
 
 open PowerSeries MatrixGroups
 

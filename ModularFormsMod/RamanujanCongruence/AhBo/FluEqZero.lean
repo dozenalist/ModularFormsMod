@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.RamanujanCongruence.Basic
+module
+
+public import ModularFormsMod.RamanujanCongruence.Basic
 
 /-!
 # The partition congruence and the U operator
@@ -13,6 +15,8 @@ The Euler product writes `fl p` as a `p`-th power times the shifted partition
 series. Extracting coefficients at multiples of `p` moves that power outside
 the extraction operator; its constant coefficient is one, so it can be cancelled.
 -/
+
+@[expose] public section
 
 noncomputable section
 

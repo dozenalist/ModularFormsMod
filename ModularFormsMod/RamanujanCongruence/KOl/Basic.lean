@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.RamanujanCongruence.KOl.ThetaRelation
+module
+
+public import ModularFormsMod.RamanujanCongruence.KOl.ThetaRelation
 
 /-!
 # The shift of a Ramanujan congruence
@@ -16,6 +18,8 @@ congruence has parameter congruent to `δ p` modulo `p`.
 
 As in the paper, the prime is at least five.
 -/
+
+@[expose] public section
 
 noncomputable section
 

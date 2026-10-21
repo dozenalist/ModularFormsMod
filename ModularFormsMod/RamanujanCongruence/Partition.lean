@@ -4,11 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import Mathlib.Combinatorics.Enumerative.Partition.GenFun
-import Mathlib.Data.Int.ModEq
-import Mathlib.Algebra.Field.Basic
-import Mathlib.RingTheory.PowerSeries.Inverse
-import Mathlib.Topology.Algebra.InfiniteSum.NatInt
+module
+
+public import Mathlib.Combinatorics.Enumerative.Partition.GenFun
+public import Mathlib.Data.Int.ModEq
+public import Mathlib.Algebra.Field.Basic
+public import Mathlib.RingTheory.PowerSeries.Inverse
+public import Mathlib.Topology.Algebra.InfiniteSum.NatInt
 
 
 /-!
@@ -16,7 +18,12 @@ import Mathlib.Topology.Algebra.InfiniteSum.NatInt
 This file defines the partition function and proves its generating function
 -/
 
+@[expose] public section
 
+
+/-- The number of unordered partitions of a nonnegative integer, and zero on
+negative integers. Here `n.Partition` is Mathlib's type of multisets of positive
+natural numbers whose sum is `n`; thus `partition 0 = 1`. -/
 def partition : ℤ → ℕ
   | Int.ofNat n => Fintype.card n.Partition
   | Int.negSucc _ => 0

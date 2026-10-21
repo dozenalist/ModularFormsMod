@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.ModularFormOver.Basic
+module
+
+public import ModularFormsMod.ModularFormOver.Basic
 
 /-!
 # Modular forms reduced along a coefficient homomorphism
@@ -15,6 +17,8 @@ The file constructs arithmetic, scalar actions, and graded ring operations,
 together with the reduction map `ModularFormOver.Reduce`. Surjective `r`
 also gives scalar multiplication and a Fourier linear map over `S`.
 -/
+
+@[expose] public section
 
 open PowerSeries MatrixGroups ModularForm
 open ModularFormOver hiding coeff

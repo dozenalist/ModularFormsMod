@@ -1,0 +1,27 @@
+name: Palomar verification
+
+on:
+  push:
+    branches: [Palomar]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install preflight and sandbox dependencies
+        run: |
+          python3 -m pip install PyYAML==6.0.2
+          sudo apt-get update
+          sudo apt-get install -y bubblewrap
+      - name: Check submitted sources and metadata
+        run: python3 scripts/check-palomar.py
+      - uses: leanprover/lean-action@v1
+      - name: Verify with Comparator and independent kernels
+        run: bash scripts/verify-comparator.sh

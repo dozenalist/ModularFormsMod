@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.RamanujanCongruence.AhBo.PrimaryLemmas
+module
+
+public import ModularFormsMod.RamanujanCongruence.AhBo.PrimaryLemmas
 
 /-!
 # The descent argument for Ramanujan congruences
@@ -13,6 +15,8 @@ The theta cycle forces a low point of filtration `12 * δ p + 4`. The Sturm boun
 then identifies this iterate with a multiple of `E₄ * fl p`. Comparing the next
 Fourier coefficient gives the contradiction in Theorem 3.1 of Ahlgren--Boylan.
 -/
+
+@[expose] public section
 
 noncomputable section
 

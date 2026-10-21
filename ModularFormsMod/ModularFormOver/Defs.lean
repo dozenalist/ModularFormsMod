@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import Mathlib.NumberTheory.ModularForms.QExpansion
+module
+
+public import Mathlib.NumberTheory.ModularForms.QExpansion
 
 /-!
 # Modular forms with Fourier coefficients in a chosen ring
@@ -15,6 +17,8 @@ condition with a modular form, and `ModularFormOverClass` extends it to other
 types of modular forms. The file supplies arithmetic operations, changes of
 weight, and the graded commutative ring structure.
 -/
+
+@[expose] public section
 
 open UpperHalfPlane PowerSeries MatrixGroups ModularForm CongruenceSubgroup
 

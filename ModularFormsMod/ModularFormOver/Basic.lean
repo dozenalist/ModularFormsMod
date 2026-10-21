@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.ModularFormOver.Defs
+module
+
+public import ModularFormsMod.ModularFormOver.Defs
 
 /-!
 # Fourier expansions and extension of coefficient rings
@@ -14,6 +16,8 @@ This file constructs their Fourier expansions and individual coefficients in
 such rings, proves compatibility with arithmetic and scalar extension, and
 establishes that a modular form is determined by its Fourier coefficients.
 -/
+
+@[expose] public section
 
 
 namespace ModularFormOver

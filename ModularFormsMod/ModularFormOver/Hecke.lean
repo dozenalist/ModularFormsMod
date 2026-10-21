@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.ModularFormOver.Basic
-import LeanModularForms.HeckeRIngs.GL2.FourierHecke
-import LeanModularForms.Modularforms.LFunction
-import ModularFormsMod.PInteger
+module
+
+public import ModularFormsMod.ModularFormOver.Basic
+public import LeanModularForms.HeckeRIngs.GL2.FourierHecke
+public import LeanModularForms.Modularforms.LFunction
+public import ModularFormsMod.PInteger
 
 /-!
 # Hecke operators over coefficient rings
@@ -16,6 +18,8 @@ import ModularFormsMod.PInteger
 the trivial-character subspace and the forms in that subspace with q-expansion coefficients in
 `R`. The character-space condition is needed for the available Fourier formula for `Tₙ`.
 -/
+
+@[expose] public section
 
 open ModularForm CongruenceSubgroup HeckeRing.GL2 Matrix.SpecialLinearGroup
 

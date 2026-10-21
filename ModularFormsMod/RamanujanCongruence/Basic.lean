@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.RamanujanCongruence.Partition
-import ModularFormsMod.ModularFormMod.ZMod.Filtration
+module
+
+public import ModularFormsMod.RamanujanCongruence.Partition
+public import ModularFormsMod.ModularFormMod.ZMod.Filtration
 
 /-!
 # Shared facts for Ramanujan congruences
@@ -18,6 +20,8 @@ This file also contains the Euler-product factorization, arithmetic of the
 discriminant shift, and initial theta-filtration formula used by both the
 Ahlgren–Boylan and Kiming–Olsson arguments.
 -/
+
+@[expose] public section
 
 noncomputable section
 

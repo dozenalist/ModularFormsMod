@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.ModularFormMod.BaseChange
+module
+
+public import ModularFormsMod.ModularFormMod.BaseChange
 
 /-!
 # Reduced forms as modules over the effective coefficient ring
@@ -13,6 +15,8 @@ The effective coefficient ring of an arbitrary map `r` is `R ⧸ ker r`. Reducti
 quotient map gives the same module over this ring. At level one this yields a basis and
 coordinates over `R ⧸ ker r`, with no surjectivity assumption on `r` itself.
 -/
+
+@[expose] public section
 
 open MatrixGroups ModularFormOver.Basis
 

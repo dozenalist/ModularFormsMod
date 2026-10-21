@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.ModularFormMod.Filtration
-import ModularFormsMod.ModularFormMod.ZMod.HasseIdeal
-import ModularFormsMod.ModularFormMod.ZMod.CoprimeAbarBbar
-import ModularFormsMod.ModularFormMod.ZMod.UOperator
+module
+
+public import ModularFormsMod.ModularFormMod.Filtration
+public import ModularFormsMod.ModularFormMod.ZMod.HasseIdeal
+public import ModularFormsMod.ModularFormMod.ZMod.CoprimeAbarBbar
+public import ModularFormsMod.ModularFormMod.ZMod.UOperator
 
 /-!
 # Filtration, theta, and U modulo a large prime
@@ -24,6 +26,8 @@ Iterating theta bounds the filtration of the U operator by
 The strict-drop criterion is stated in positive weight so that it includes
 the zero form, whose filtration in this development is zero.
 -/
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 set_option backward.defeqAttrib.useBackward true

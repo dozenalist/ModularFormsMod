@@ -53,6 +53,65 @@ A Lean 4 formalization of modular forms with coefficients over subrings of `ℂ`
 This repository was adapted from a [previous formalization project](https://github.com/dozenalist/Partitions-mod-p) of mine, which formalized the arguments of [Ah-Bo], as well as much of the structure surrounding the reduction of modular forms modulo a prime by hand -- without the use of AI. In the process of connecting those results to Mathlib using AI assistance, I was motivated to re-formalize my work from the ground up and in more generality. The files [Defs](ModularFormsMod/ModularFormOver/Defs.lean) and [Basic](ModularFormsMod/ModularFormOver/Basic.lean) were written entirely by me, without AI assistance. Most of everything else in this project was written by first formalizing the main definitions and statements, and then prompting Codex to fill in the gaps, making use of code from my previous project. Codex was used also to generate documentation for many files and declarations.
 
 ## Dependencies
-This project depends on Mathlib as well as Chris Birbeck's repository [LeanModularForms](https://github.com/CBirkbeck/LeanModularForms) for the definitions of Hecke Operators and facts about their q-expansions.
+This project depends on Mathlib as well as Chris Birkbeck's repository [LeanModularForms](https://github.com/CBirkbeck/LeanModularForms) for the definitions of Hecke Operators and facts about their q-expansions. The required portion of the latter is retained as a contained, module-compatible package in [vendor/LeanModularForms](vendor/LeanModularForms/README.md), with its upstream revision and licence recorded there. Mathlib is pinned to an immutable commit in the Lakefile and committed manifests.
 
 The project is released under the [Apache 2.0 license](LICENSE).
+
+## Palomar submission
+
+The root project follows the [Palomar submission requirements](https://palomar-registry.org/how-to-submit).
+[Challenge.lean](Challenge.lean) is the complete mathematical statement surface:
+its only project-specific definition is `partition`, and it states exactly
+`not_RamanujanCongruence_verbose`, `RamanujanCongruence_5_verbose`,
+`RamanujanCongruence_7_verbose`, and `RamanujanCongruence_11_verbose`.
+[Solution.lean](Solution.lean) publicly imports the original proofs from
+[MainResults.lean](ModularFormsMod/RamanujanCongruence/MainResults.lean).
+Challenge and Solution are separate environments and must not import each other.
+
+`partition n` counts Mathlib's unordered partitions when `n` is nonnegative,
+including the empty partition at zero, and is zero for negative `n`. The three
+positive theorems prove the classical congruences on `5n+4`, `7n+5`, and `11n+6`
+for every integer `n`. The negative theorem says that, for any prime `p ≥ 13`
+and any integer `β`, some integer `n` has `partition (p*n-β)` not divisible by
+`p`. It excludes congruences on entire progressions whose step is the prime
+modulus. These four statements do not cover primes 2 and 3, congruences modulo
+prime powers, or progressions with other steps.
+
+[comparator.json](comparator.json) selects only those four theorems and permits
+only `propext`, `Quot.sound`, and `Classical.choice`. Its `definition_names` is
+empty because that field designates *definition holes*. Here the Challenge gives
+`partition` its actual body, so Comparator checks that body and its dependencies
+transitively instead of permitting an arbitrary replacement. The only intentional
+`sorry` proofs are the four statements in the Challenge. The Solution must have
+no dependence on `sorryAx`, `Lean.ofReduceBool`, or custom axioms.
+
+[formalization.yaml](formalization.yaml) records the mathematical sources,
+declaration alignment, prior formalizations, authorship, AI assistance, scope,
+and review status. This repository contains the substantive proof development.
+It formalizes existing results rather than claiming new mathematics. The
+Attribution section above describes the human and AI workflow; no independent
+human peer review or source-author endorsement is asserted.
+
+To check a checkout using its pinned toolchain:
+
+```sh
+python3 -m pip install PyYAML==6.0.2
+python3 scripts/check-palomar.py
+lake exe cache get
+lake build
+bash scripts/verify-comparator.sh
+```
+
+The last command requires Linux and `bubblewrap` (`bwrap`). It runs the
+toolchain's `lake comparator`, including its bundled NanoDa and con-ron
+independent kernels. The [Palomar verification workflow](.github/workflows/palomar.yml)
+runs these checks on the `Palomar` branch. Lean's four intentional Challenge
+`sorry` warnings are expected; they do not constitute missing Solution proofs.
+
+After the checks pass, submit `dozenalist/ModularFormsMod` and the full
+40-character SHA returned by `git rev-parse HEAD` for the pushed `Palomar`
+commit. Leave the project, Comparator configuration, and metadata path fields
+blank: this repository uses the conventional root layout. A branch name is not
+a submission revision. Repository preparation and a passing workflow do not
+submit or register the result; the responsible author or maintainer chooses
+whether to submit and later register it with Palomar.

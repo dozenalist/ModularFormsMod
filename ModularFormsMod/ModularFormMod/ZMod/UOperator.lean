@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.ModularFormMod.ZMod.Theta
-import ModularFormsMod.ModularFormMod.Hecke
-import ModularFormsMod.ModularFormMod.Basis
+module
+
+public import ModularFormsMod.ModularFormMod.ZMod.Theta
+public import ModularFormsMod.ModularFormMod.Hecke
+public import ModularFormsMod.ModularFormMod.Basis
 
 /-!
 # The U operator on modular forms modulo a prime
@@ -15,6 +17,8 @@ The operator selects the coefficients whose indices are divisible by `p`.
 In weights at least two it is the reduction of the prime Hecke operator `T_p`.
 In weight zero it fixes constants, extending the coefficient formula to every weight.
 -/
+
+@[expose] public section
 
 open PowerSeries MatrixGroups CongruenceSubgroup ModularFormOver PInteger
 
@@ -45,7 +49,8 @@ private theorem mem_trivialChar_one (f : ModularForm (Gamma1 1) k) :
   have hd : d = 1 := Subsingleton.elim _ _
   simp [hd, trivialChar]
 
-private def T_pIntegralGamma1 (hk : 1 ≤ k) (f : ModularFormOver ℤ(p) (Gamma1 1) k) :
+/-- The prime Hecke operator on level `Γ₁(1)` preserves `p`-integral coefficients. -/
+def T_pIntegralGamma1 (hk : 1 ≤ k) (f : ModularFormOver ℤ(p) (Gamma1 1) k) :
     ModularFormOver ℤ(p) (Gamma1 1) k where
   toModularForm := (T_p 1 p (by simp)).1 k f.toModularForm
   isOver' := by
@@ -78,7 +83,8 @@ private theorem coeff_T_pIntegralGamma1 (hk : 1 ≤ k)
   simp only [map_mul, map_pow, map_natCast, map_coeff_eq_qExp, hpow]
   rfl
 
-private def T_pIntegralAt {Γ : Subgroup (GL (Fin 2) ℝ)}
+/-- Transport the integral Hecke operator along an equality with `Γ₁(1)`. -/
+def T_pIntegralAt {Γ : Subgroup (GL (Fin 2) ℝ)}
     (hΓ : Γ = (Gamma1 1 : Subgroup (GL (Fin 2) ℝ))) (hk : 1 ≤ k)
     (f : ModularFormOver ℤ(p) Γ k) : ModularFormOver ℤ(p) Γ k := by
   subst Γ

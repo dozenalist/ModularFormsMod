@@ -4,14 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.ModularFormOver.Basic
-import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
-import Mathlib.NumberTheory.ModularForms.EisensteinSeries.E2.Summable
-import Mathlib.NumberTheory.ModularForms.EisensteinSeries.E2.MDifferentiable
-import Mathlib.NumberTheory.ModularForms.EisensteinSeries.E2.Transform
-import Mathlib.NumberTheory.ModularForms.NormTrace
-import Mathlib.NumberTheory.ModularForms.LevelOne.GradedRing
-import ModularFormsMod.qExp_discriminant
+module
+
+public import ModularFormsMod.ModularFormOver.Basic
+public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
+public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.E2.Summable
+public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.E2.MDifferentiable
+public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.E2.Transform
+public import Mathlib.NumberTheory.ModularForms.NormTrace
+public import Mathlib.NumberTheory.ModularForms.LevelOne.GradedRing
+public import ModularFormsMod.qExp_discriminant
 
 
 /-!
@@ -22,6 +24,8 @@ This file bundles them as forms over `ℤ`, gives their coefficient formulas
 after scalar extension, defines the formal series for `E₂`, and proves
 the identity `1728 • Δ = E₄³ - E₆²` over the integers.
 -/
+
+@[expose] public section
 
 open ModularForm hiding E₄ E₆
 open ModularFormOver UpperHalfPlane CongruenceSubgroup MatrixGroups ArithmeticFunction.sigma

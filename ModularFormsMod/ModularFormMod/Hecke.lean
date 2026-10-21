@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.ModularFormMod.Operators
-import ModularFormsMod.ModularFormOver.Hecke
+module
+
+public import ModularFormsMod.ModularFormMod.Operators
+public import ModularFormsMod.ModularFormOver.Hecke
 
 /-!
 # Hecke operators after coefficient reduction
@@ -19,6 +21,8 @@ over compatible algebras over `ℤ[1/p]`.
 At general level the domain is the submodule `heckeCharSpace` of reduced forms
 admitting a trivial-character lift. At level one this is the entire space.
 -/
+
+@[expose] public section
 
 open MatrixGroups CongruenceSubgroup HeckeRing.GL2
 open scoped PInteger

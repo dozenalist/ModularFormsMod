@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.ModularFormMod.Kernel
+module
+
+public import ModularFormsMod.ModularFormMod.Kernel
 
 /-!
 # Descent of linear operators through coefficient reduction
@@ -13,6 +15,8 @@ A linear operator descends exactly when it preserves the coefficient congruence 
 This provides a common interface for Hecke operators and other operators whose Fourier
 coefficient formulas preserve congruences.
 -/
+
+@[expose] public section
 
 open MatrixGroups
 

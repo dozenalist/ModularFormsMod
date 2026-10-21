@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.ModularFormOver.GradedRing
-import ModularFormsMod.ModularFormOver.Derivative
-import Mathlib.Algebra.MvPolynomial.PDeriv
-import Mathlib.NumberTheory.ModularForms.RamanujanFormula
+module
+
+public import ModularFormsMod.ModularFormOver.GradedRing
+public import ModularFormsMod.ModularFormOver.Derivative
+public import Mathlib.Algebra.MvPolynomial.PDeriv
+public import Mathlib.NumberTheory.ModularForms.RamanujanFormula
 
 /-!
 # The Serre derivation on polynomials
@@ -16,6 +18,8 @@ import Mathlib.NumberTheory.ModularForms.RamanujanFormula
 `Del X₁ = -6 X₀²`. Polynomial representation identifies it with the normalized
 Serre derivative `12 θ - k E₂` on level-one modular forms.
 -/
+
+@[expose] public section
 
 noncomputable section
 

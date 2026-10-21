@@ -4,14 +4,18 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.ModularFormMod.ZMod.Basic
-import ModularFormsMod.ModularFormMod.Derivative
+module
+
+public import ModularFormsMod.ModularFormMod.ZMod.Basic
+public import ModularFormsMod.ModularFormMod.Derivative
 
 /-!
 # The theta operator on modular forms modulo a large prime
 
 The Fourier-series operator `X d/dX` raises weight by `p + 1` in characteristic `p`.
 -/
+
+@[expose] public section
 
 open PowerSeries MatrixGroups ModularFormOver PInteger
 

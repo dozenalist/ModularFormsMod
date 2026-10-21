@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Carter Hastings
 -/
 
-import ModularFormsMod.ModularFormMod.ZMod.Filtration
+module
+
+public import ModularFormsMod.ModularFormMod.ZMod.Filtration
 
 /-!
 # Separating Fourier relations by weight modulo `p - 1`
@@ -12,6 +14,8 @@ import ModularFormsMod.ModularFormMod.ZMod.Filtration
 This is the direct-sum observation used in Kiming--Olsson, Proposition 3.
 The Hasse relation `Abar - 1` is homogeneous of degree zero for this grading.
 -/
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,8 @@ namespace RamanujanCongruence.KOl
 
 variable {p : ℕ} [isLargePrime p]
 
-private def residueWeights (p : ℕ) (i : Fin 2) : ZMod (p - 1) :=
+/-- The Eisenstein weights four and six, reduced modulo `p - 1`. -/
+def residueWeights (p : ℕ) (i : Fin 2) : ZMod (p - 1) :=
   (eisensteinWeights i : ZMod (p - 1))
 
 private theorem homogeneous_residue {F : MvPolynomial (Fin 2) (ZMod p)} {k : ℤ}
